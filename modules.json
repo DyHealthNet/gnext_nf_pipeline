@@ -1,0 +1,36 @@
+{
+  "name": "DyHealthNetLight NextFlow Pipeline",
+  "homePage": "",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "ensemblvep/download": {
+            "branch": "master",
+            "git_sha": "f9234d35f5b9143313a4773fb54716876c030323",
+            "installed_by": ["modules"]
+          },
+          "ensemblvep/vep": {
+            "branch": "master",
+            "git_sha": "2fcc53751152a999bfc9c24f75f494b9e5bb338f",
+            "installed_by": ["modules", "vcf_annotate_ensemblvep"]
+          },
+          "tabix/tabix": {
+            "branch": "master",
+            "git_sha": "f2cfcf9d3f6a2d123e6c44aefa788aa232204a7a",
+            "installed_by": ["modules", "vcf_annotate_ensemblvep"]
+          }
+        }
+      },
+      "subworkflows": {
+        "nf-core": {
+          "vcf_annotate_ensemblvep": {
+            "branch": "master",
+            "git_sha": "2fcc53751152a999bfc9c24f75f494b9e5bb338f",
+            "installed_by": ["subworkflows"]
+          }
+        }
+      }
+    }
+  }
+}

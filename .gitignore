@@ -1,0 +1,28 @@
+# macOS Finder files
+.DS_Store
+
+# Nextflow work and output dirs
+work/
+results/
+output/
+.nextflow*
+.cache/
+.nf-test/
+
+# Logs
+*.log
+*.trace
+*.timeline
+*.report
+
+# Common temp / scratch dirs
+tmp/
+temp/
+
+# Python / R caches (if you use scripts)
+__pycache__/
+*.pyc
+.Rhistory
+.RData
+
+.vscode/

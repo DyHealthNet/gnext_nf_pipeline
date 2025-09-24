@@ -1,0 +1,21 @@
+process generate_top_hits {
+  publishDir "${params.out_dir}/top_hits", mode: 'symlink'
+  cpus 1
+  
+  tag "top_hits"
+
+  input:
+  val manhattan_files
+
+  output:
+  path "top_hits.json"
+
+  script:
+    """
+    generate_top_hits.py \
+      --manhattan-files ${manhattan_files.join(' ')} \
+      --out top_hits.json \
+      --pval-cutoff ${params.top_hits_pval_cutoff} \
+      --max-limit ${params.top_hits_max_limit}
+    """
+}
