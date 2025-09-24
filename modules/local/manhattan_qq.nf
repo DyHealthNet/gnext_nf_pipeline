@@ -26,14 +26,9 @@ process manhattan_qq {
     echo -e "\$f\t\$(basename \$f .gz)" >> manifest.tsv
   done
 
-  mkdir lmdb-database
-  mv lmdb-data.mdb lmdb-database/data.mdb
-  mv lmdb-data.mdb-lock lmdb-database/lock.mdb
-
-
   export PYTHONPATH=${projectDir}
   generate_manhattan_qq.py --input-files manifest.tsv \
-      --lmdb lmdb-database/data.mdb \
+      --lmdb ${lmdb_data_path} \
       --max-workers ${task.cpus} \
       --manhattan-num-unbinned ${params.manhattan_num_unbinned ?: 500} \
       --within-pheno-mask-around-peak ${params.within_pheno_mask_around_peak ?: 500000} \

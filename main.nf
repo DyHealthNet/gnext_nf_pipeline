@@ -65,8 +65,8 @@ workflow {
     lmdb_path = generate_variant_id_lmdb(vep_vcf, vep_tbi, chroms.splitText().map{it.trim()}.collect())
 
     if(params.steps.contains("gwas_exploration")){
-        // 7. Generate Manhattan & QQ per trait not in batches because of lmdb lookups
-        norm_batches = norm_channels.manhattan.collect()
+        // 7. Generate Manhattan & QQ per trait not in batches because of lmdb
+        norm_batches = norm_channels.manhattan.collate(params.pheno_batch_size)
         manhattan_qq_inputs = norm_batches.combine(lmdb_path.lmdb_data).combine(lmdb_path.lmdb_lock)
                                .map { items ->
                                    def lmdb_data = items[-2]

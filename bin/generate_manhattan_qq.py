@@ -16,12 +16,7 @@ from locuszoom import manhattan, qq
 from zorp import sniffers, lookups
 import time
 
-def add_rsID_with_lmdb(reader, lmdb_path):
-    # Open LMDB once (shared by all threads)
-    rsid_finder = lookups.SnpToRsid(lmdb_path, test=False)
-    reader.add_lookup('rsid', lambda variant: rsid_finder(variant.chrom, variant.pos, variant.ref, variant.alt))
-
-def generate_manhattan(reader, out_filename: str, manhattan_num_unbinned=500, within_pheno_mask_around_peak=500_000, between_pheno_mask_around_peak=1_000_000, manhattan_peak_max_count=500, manhattan_peak_pval_threshold=1e-6, manhattan_peak_sprawl_dist=200_000, manhattan_peak_variant_counting_pval_threshold=5e-8) -> bool:
+def generate_manhattan(reader, out_filename: str, lmdb_path: str, manhattan_num_unbinned=500, within_pheno_mask_around_peak=500_000, between_pheno_mask_around_peak=1_000_000, manhattan_peak_max_count=500, manhattan_peak_pval_threshold=1e-6, manhattan_peak_sprawl_dist=200_000, manhattan_peak_variant_counting_pval_threshold=5e-8) -> bool:
     binner = manhattan.Binner(
         manhattan_num_unbinned=manhattan_num_unbinned,
         within_pheno_mask_around_peak=within_pheno_mask_around_peak,
@@ -34,9 +29,23 @@ def generate_manhattan(reader, out_filename: str, manhattan_num_unbinned=500, wi
     print("Processing variants for Manhattan plot...", file=sys.stderr)
     for variant in reader:
         binner.process_variant(variant)
-        
     print("Getting results of the binning...", file=sys.stderr)
     manhattan_data = binner.get_result()
+    
+    if lmdb_path is not None:
+        print("Adding rsIDs to variants using LMDB...", file=sys.stderr)
+        start = time.time()
+        rsid_finder = lookups.SnpToRsid(lmdb_path, test=False)
+
+        for v_dict in manhattan_data['unbinned_variants']:
+            try:
+                rsid = rsid_finder(v_dict['chrom'], v_dict['pos'], v_dict['ref'], v_dict['alt'])
+                v_dict['rsid'] = rsid
+            except Exception as e:
+                print(f"Error finding rsID for variant {v_dict}: {e}", file=sys.stderr)
+                v_dict['rsid'] = None
+        print(f"Time for adding rsIDs: {time.time() - start} seconds", file=sys.stderr)
+                
     #for v_dict in manhattan_data['unbinned_variants']:
     #    if math.isinf(v_dict['neg_log_pvalue']):
     #        v_dict['neg_log_pvalue'] = 'Infinity'
@@ -67,20 +76,16 @@ def process_file(gwas_file, phenocode, lmdb_path, manhattan_num_unbinned=500, wi
     qq_file = f"{phenocode}_qq.json"
     
     # Read data for Manhattan plot & add rsIDs to variants using the LMDB path
-    start = time.time()
     reader_for_manhattan = sniffers.guess_gwas_standard(gwas_file).add_filter('neg_log_pvalue')
-    print(f"Time for creating the reader: {time.time() - start} seconds", file=sys.stderr)
     start = time.time()
-    if lmdb_path is not None:
-        add_rsID_with_lmdb(reader_for_manhattan, lmdb_path)
-    print(f"Time for adding rsIDs from LMDB: {time.time() - start} seconds", file=sys.stderr)
-    start = time.time()
-    generate_manhattan(reader_for_manhattan, manhattan_file, manhattan_num_unbinned, within_pheno_mask_around_peak, between_pheno_mask_around_peak, manhattan_peak_max_count, manhattan_peak_pval_threshold, manhattan_peak_sprawl_dist, manhattan_peak_variant_counting_pval_threshold)
+    generate_manhattan(reader_for_manhattan, manhattan_file, lmdb_path, manhattan_num_unbinned, within_pheno_mask_around_peak, between_pheno_mask_around_peak, manhattan_peak_max_count, manhattan_peak_pval_threshold, manhattan_peak_sprawl_dist, manhattan_peak_variant_counting_pval_threshold)
     print(f"Time for generating Manhattan plot: {time.time() - start} seconds", file=sys.stderr)
     
     # Read data for QQ plot
     reader_for_qq = sniffers.guess_gwas_standard(gwas_file).add_filter('neg_log_pvalue')
+    start = time.time()
     generate_qq(reader_for_qq, qq_file)
+    print(f"Time for generating QQ plot: {time.time() - start} seconds", file=sys.stderr)
     return manhattan_file, qq_file
 
 def main():
