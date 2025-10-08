@@ -67,6 +67,7 @@ def main():
     args = parser.parse_args()
     
     input_files_dt = pd.read_csv(args.input_files, sep="\t", header=None, names=["file_path", "phenocode"])
+    print(f"[INFO] Loaded {len(input_files_dt)} files to normalize", file=sys.stderr)
     with ProcessPoolExecutor(max_workers=args.max_workers) as executor:
         futures = [
             executor.submit(process_and_normalize, row['file_path'], row['phenocode'], args.chr_col, args.pos_col, args.ref_col, args.alt_col, args.pval_col, args.pval_neglog10, args.beta_col, args.se_col, args.af_col)

@@ -1,4 +1,5 @@
 process normalize {
+  cache 'lenient'
   publishDir "${params.out_dir}/normalize", mode: 'symlink'
 
   cpus params.normalize_cpus ?: 8
@@ -7,7 +8,7 @@ process normalize {
   tag { "batch ${pheno_data.size()} files" }
 
   input:
-  val(pheno_data)  // list of [phenocode, file] tuples
+  val(pheno_data)  // list of [phenocode, file, nr_samples]
 
   output:
   path "*.gz", emit: gz
@@ -17,7 +18,7 @@ process normalize {
   def neglog_flag = params.pval_neglog10 ? "--pval-neglog10" : ""
 
   // Write manifest.tsv directly
-  def manifestContent = pheno_data.collect { filename, phenocode ->
+  def manifestContent = pheno_data.collect { phenocode, filename, nr_samples ->
         "${filename}\t${phenocode}"
     }.join("\n")
 
