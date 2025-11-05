@@ -1,4 +1,4 @@
-# Nextflow Pipeline for Preprocessing GWAS Summary Statistics Files and Generating Files for the DyHealthNetLight Platform
+# Nextflow Preprocessing Pipeline for DyHealthNet Light Platform
 
 Data preprocessing for the DyHealthNet Light platform is performed through a Nextflow-based pipeline that enables seamless deployment across different computing environments and automatically ensures scalability for large collections of GWAS summary statistics. 
 
