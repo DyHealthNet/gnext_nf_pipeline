@@ -1,0 +1,6 @@
+name: vep_110
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::ensembl-vep=110.0

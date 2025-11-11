@@ -7,7 +7,7 @@ import msgpack
 import pysam
 
 
-def build_snp_map_lmdb_from_vcf(vcf_path, out_file, num_chroms=25):
+def build_snp_map_lmdb_from_vcf(vcf_path, out_file, num_chroms=28):
     """
     Build an LMDB mapping of (chrom,pos,ref/alt) -> rsID
     from an annotated VCF file.
@@ -63,7 +63,7 @@ def build_snp_map_lmdb_from_vcf(vcf_path, out_file, num_chroms=25):
     env.close()
 
 
-def setup_rsid_mapping_lmdb(vcf_path, out_prefix, num_chroms=25):
+def setup_rsid_mapping_lmdb(vcf_path, out_prefix, num_chroms=28):
     """
     Create LMDB mapping database if it does not already exist.
     """
@@ -75,7 +75,7 @@ def main():
     )
     parser.add_argument("--vcf", required=True, help="Path to annotated VCF (bgzipped + indexed)")
     parser.add_argument("--out-file", required=True, help="Output directory for LMDB")
-    parser.add_argument("--num-chroms", type=int, default=25, help="Max number of chromosome DBs")
+    parser.add_argument("--num-chroms", type=int, default=28, help="Max number of chromosome DBs")
     args = parser.parse_args()
 
     setup_rsid_mapping_lmdb(args.vcf, args.out_file, num_chroms=args.num_chroms)

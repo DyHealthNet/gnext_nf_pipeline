@@ -45,7 +45,7 @@ def process_and_normalize(file_path,
         "alt_allele_freq"
     ]
 
-    reader.write(norm_filepath, make_tabix=True, columns=columns)
+    reader.write(norm_filepath, make_tabix=False, columns=columns)
 
     return norm_filepath + ".gz"
 

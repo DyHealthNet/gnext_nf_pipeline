@@ -5,7 +5,8 @@ process generate_top_hits {
   tag "top_hits"
 
   input:
-  val manhattan_files
+  path manhattan_files_file
+  path pheno_file
 
   output:
   path "top_hits.json"
@@ -13,7 +14,8 @@ process generate_top_hits {
   script:
     """
     generate_top_hits.py \
-      --manhattan-files ${manhattan_files.join(' ')} \
+      --manhattan-files-file ${manhattan_files_file} \
+      --phenocode-file ${pheno_file} \
       --out top_hits.json \
       --pval-cutoff ${params.top_hits_pval_cutoff} \
       --max-limit ${params.top_hits_max_limit}

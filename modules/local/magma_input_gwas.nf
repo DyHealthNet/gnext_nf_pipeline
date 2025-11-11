@@ -4,13 +4,15 @@ process generate_magma_data_input {
   cpus params.magma_input_cpus ?: 32
   memory params.magma_input_memory ?: '64 GB'
 
-  tag { "batch ${gz_files.size()} files" }
+  tag { "${gz_files.size()}" }
 
   input:
     val(gz_files)
+    path magma_reference_plink_bim
 
   output:
-  path "*_magma.tsv", emit: gz
+  path "*_magma.tsv", emit: input_files
+  path "mapping_summary.tsv", emit: mapping_summary
 
   script:  
 
@@ -30,6 +32,6 @@ process generate_magma_data_input {
     --input-files manifest.tsv \
     --max-workers ${task.cpus} \
     --genome-build ${params.ensemblvep_genome} \
-    --ref-bim ${params.magma_reference_plink + ".bim"} \
+    --ref-bim ${magma_reference_plink_bim} \
   """
 }

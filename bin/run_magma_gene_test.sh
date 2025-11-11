@@ -1,8 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-mkdir temp_annot
-
+mkdir -p temp_annot
 
 REF_FILE=$1
 
@@ -16,7 +15,8 @@ NR_SAMPLES=$5
 
 OUT_PREFIX=$6
 
-echo "Running MAGMA gene analysis with the following parameters:"
+
+echo "MAGMA parameters:"
 echo "Reference file: $REF_FILE"
 echo "Annotation file: $ANNO_LOC"
 echo "SNP p-value file: $SNP_PVAL_FILE"
@@ -25,26 +25,39 @@ echo "Number of samples: $NR_SAMPLES"
 echo "Output prefix: $OUT_PREFIX"
 
 
-# run magma in parallel
 
-seq 1 "$MAX_WORKERS" | parallel -j "$MAX_WORKERS" \
-  magma \
-    --batch {} "$MAX_WORKERS" \
+# run magma
+magma \
     --bfile "$REF_FILE" synonyms=0 \
     --gene-annot "$ANNO_LOC" \
     --gene-model snp-wise=mean \
     --pval "$SNP_PVAL_FILE" N="$NR_SAMPLES" \
-    --out "temp_annot/${OUT_PREFIX}" \
+    --out "${OUT_PREFIX}" \
     --genes-only
+
+echo "MAGMA gene analysis completed."
+
+
+# run magma in parallel
+
+#seq 1 "$MAX_WORKERS" | parallel -j "$MAX_WORKERS" \
+#  magma \
+#    --batch {} "$MAX_WORKERS" \
+#    --bfile "$REF_FILE" synonyms=0 \
+#    --gene-annot "$ANNO_LOC" \
+#    --gene-model snp-wise=mean \
+#    --pval "$SNP_PVAL_FILE" N="$NR_SAMPLES" \
+#    --out "temp_annot/${OUT_PREFIX}" \
+#    --genes-only
 
 # merge intermediate results generated under the temp_annot files and merge to one single file set
 
-magma \
-  --merge temp_annot/$OUT_PREFIX \
-  --out temp_annot/$OUT_PREFIX
+#magma \
+#  --merge temp_annot/$OUT_PREFIX \
+#  --out temp_annot/$OUT_PREFIX
 
 # extract merged files for subsequent analysis
-cp temp_annot/$OUT_PREFIX.genes.* .
+#cp temp_annot/$OUT_PREFIX.genes.* .
 
 # remove the temporary folder
-rm -r temp_annot
+#rm -r temp_annot

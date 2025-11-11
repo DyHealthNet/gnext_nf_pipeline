@@ -37,6 +37,18 @@ process ENSEMBLVEP_VEP {
     def reference = fasta ? "--fasta ${fasta}" : ""
     def create_index = file_extension == "vcf" ? "tabix ${args2} ${prefix}.${file_extension}.gz" : ""
     """
+    echo "=== ENSEMBLVEP_VEP Arguments ==="
+    echo "VCF: ${vcf}"
+    echo "ARGS: ${args}"
+    echo "ARGS2: ${args2}"
+    echo "GENOME: ${genome}"
+    echo "SPECIES: ${species}"
+    echo "CACHE_VERSION: ${cache_version}"
+    echo "REFERENCE: ${reference}"
+    echo "DIR_CACHE: ${dir_cache}"
+    echo "PREFIX: ${prefix}"
+    echo "==============================="
+    
     vep \\
         -i ${vcf} \\
         -o ${prefix}.${file_extension}.gz \\

@@ -1,5 +1,4 @@
 process generate_variant_id_lmdb {
-  conda = "envs/dyhealthnetlight_nf_pipeline.yml"
   publishDir "${params.out_dir}/lmdb", mode: 'symlink'
   cpus 2
   memory '16 GB'

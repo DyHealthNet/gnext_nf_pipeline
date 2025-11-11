@@ -5,7 +5,10 @@ process normalize {
   cpus params.normalize_cpus ?: 8
   memory params.normalize_memory ?: '32 GB'
 
-  tag { "batch ${pheno_data.size()} files" }
+  tag { "${pheno_data.size()}" }
+
+  when:
+    pheno_data.size() > 0
 
   input:
   val(pheno_data)  // list of [phenocode, file, nr_samples]
@@ -43,5 +46,20 @@ process normalize {
     --beta-col ${params.beta_column} \
     --se-col ${params.se_column} \
     --af-col ${params.af_column}
+  
+  # Get phenocodes from manifest and process each file
+  while IFS=\$'\t' read -r filename phenocode; do
+    if [ -f "\${phenocode}" ]; then
+      echo "Processing \${phenocode} ..."
+      sort -k1,1n -k2,2n "\${phenocode}" | bgzip > "\${phenocode}.gz"
+      tabix -f -p vcf "\${phenocode}.gz"
+      rm "\${phenocode}"
+    else
+      echo "Warning: Expected file \${phenocode} not found"
+    fi
+  done < manifest.tsv
+
+  echo "Final output files:"
+  ls -lh *.gz *.gz.tbi
   """
 }

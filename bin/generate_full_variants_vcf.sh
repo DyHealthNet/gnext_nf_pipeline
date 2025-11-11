@@ -23,34 +23,33 @@ echo "Input files: ${FILES[*]}"
 TMP_DIR=$(mktemp -d)
 trap "rm -rf $TMP_DIR" EXIT
 
-printf "%s\n" "${FILES[@]}" \
-  | parallel -j"$NUM_JOBS" --tmpdir "$TMP_DIR" --compress --no-notice '
-      FILE={}
-      PHENO=$(basename "$FILE" .gz)
-      gzip -cd "$FILE" \
-      | awk -v pheno="$PHENO" -F"\t" -v OFS="\t" "
-          NR==1 {
-            for (i=1; i<=NF; i++) {
-              h=tolower(\$i)
-              if (h==\"#chrom\"||h==\"chrom\") c=i
-              if (h==\"pos\")                  p=i
-              if (h==\"ref\")                  r=i
-              if (h==\"alt\")                  a=i
-            }
-            if (!c||!p||!r||!a) {
-              print \"ERROR: header missing columns in \" pheno > \"/dev/stderr\"
-              exit 1
-            }
-            next
-          }
-          \$c&&\$p&&\$r&&\$a {
-            print \$c, \$p, \".\", \$r, \$a, \".\", \".\", \".\"
-          }
-      "
-  ' \
-  | sort -k1,1 -k2,2n -S10G --temporary-directory="$TMP_DIR" \
-  | uniq \
-  >> "$OUTPUT_FILE"
+# Iterate over all files one by one
+for FILE in "${FILES[@]}"; do
+  PHENO=$(basename "$FILE" .gz)
+  gzip -cd "$FILE" \
+  | awk -v pheno="$PHENO" -F"\t" -v OFS="\t" '
+      NR==1 {
+        for (i=1; i<=NF; i++) {
+          h=tolower($i)
+          if (h=="#chrom" || h=="chrom") c=i
+          if (h=="pos")                  p=i
+          if (h=="ref")                  r=i
+          if (h=="alt")                  a=i
+        }
+        if (!c || !p || !r || !a) {
+          print "ERROR: header missing columns in " pheno > "/dev/stderr"
+          exit 1
+        }
+        next
+      }
+      c && p && r && a {
+        print $c, $p, ".", $r, $a, ".", ".", "."
+      }
+    '
+done \
+| sort -k1,1 -k2,2n -S10G --temporary-directory="$TMP_DIR" \
+| uniq \
+>> "$OUTPUT_FILE"
 
 chmod 777 "$OUTPUT_FILE"
 echo "Done. VCF written to: $OUTPUT_FILE"
