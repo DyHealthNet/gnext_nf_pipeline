@@ -14,16 +14,12 @@ workflow {
     //CHECK_PARAMETERS()
 
     // Read phenotype manifest CSV -> deterministic batching for stable caching
-   gwas_rows = Channel
+    gwas_rows = Channel
         .fromPath(params.pheno_file)
         .splitCsv(header: true)
-        .collect()                                // gather all rows first
-        .flatMap { rows ->
-            rows
-                .sort { a, b -> a.phenocode <=> b.phenocode }  // sort by phenocode
-                .collect { row -> 
-                    def n_int = row.nr_samples.toString().replace('.0', '').toInteger()
-                    tuple(row.phenocode, row.filename.toString(), n_int) }
+        .map { row ->
+            def n_int = row.nr_samples.toString().replace('.0', '').toInteger()
+            tuple(row.phenocode, row.filename.toString(), n_int)
         }
 
     // Normalize GWAS summary statistics
@@ -31,7 +27,7 @@ workflow {
 
     // Proceed with downstream GWAS exploration and gene statistics
 
-    if(params.steps.contains("gwas_exploration")){
+    /* if(params.steps.contains("gwas_exploration")){
 
         // Annotate variants using Ensembl VEP
         ANNOTATE_VARIANTS(NORMALIZE_GWAS.out.vcf)
@@ -46,7 +42,7 @@ workflow {
             ANNOTATE_VARIANTS.out.ref_vcf,
             ANNOTATE_VARIANTS.out.ref_tbi
         )
-    }
+    }*/
 
     if(params.steps.contains("gene_statistics")){
         MAGMA_ANALYSIS(
@@ -55,5 +51,5 @@ workflow {
         )
     }
 
-    SNAPSHOT_PARAMETERS() 
+    SNAPSHOT_PARAMETERS()  
 }

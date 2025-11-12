@@ -79,6 +79,7 @@ def main():
                 print(f"[OK] Generated {normalized_file}", file=sys.stderr)
             except Exception as e:
                 print(f"[ERROR] {e}", file=sys.stderr)
+                exit(1)
 
 
 if __name__ == "__main__":
