@@ -27,7 +27,7 @@ workflow {
 
     // Proceed with downstream GWAS exploration and gene statistics
 
-    /* if(params.steps.contains("gwas_exploration")){
+    if(params.steps.contains("gwas_exploration")){
 
         // Annotate variants using Ensembl VEP
         ANNOTATE_VARIANTS(NORMALIZE_GWAS.out.vcf)
@@ -42,7 +42,7 @@ workflow {
             ANNOTATE_VARIANTS.out.ref_vcf,
             ANNOTATE_VARIANTS.out.ref_tbi
         )
-    }*/
+    }
 
     if(params.steps.contains("gene_statistics")){
         MAGMA_ANALYSIS(
