@@ -44,8 +44,7 @@ Each row represents one phenotype, with the following columns:
 
 These column names are mandatroy, while additional columns may be included.
 
-The GWAS summary statistics must be provided as tab-separated files gzip compressed with a .gz extension. The column positions for the required fields can be defined within the study-specific configuration.
-
+The column positions for the required fields (chrom, pos, ref, alt, p-value, beta, se, af) can be defined within the study-specific configuration.
 
 ## Fill the Nextflow Config Files
 
