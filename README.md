@@ -39,6 +39,8 @@ Each row represents one phenotype, with the following columns:
 | **Column** | **Description** |
 |-------------|-----------------|
 | `phenocode`  | Unique identifier of the phenotype or trait analyzed in the corresponding GWAS summary statistics file. |
+| `description`  | Description of the phenotype or trait analyzed in the corresponding GWAS summary statistics file. |
+| `category`  | Group/category of the phenotype or trait analyzed in the corresponding GWAS summary statistics file. |
 | `filename` | **Absolute** path to the GWAS summary statistics file associated with the phenotype. |
 | `nr_samples` | Number of samples included in the GWAS for the respective phenotype, used for downstream analyses such as MAGMA gene-based testing. |
 
@@ -71,7 +73,7 @@ In addition, a general configuration file configs/base.config is provided to adj
 | `pval_column` | `16` | Column index of the p-value field. |
 | `beta_column` | `9` | Column index of the effect size (beta) field. |
 | `se_column` | `10` | Column index of the standard error field. |
-| `af_column` | `8` | Column index of the allele frequency field. |
+| `af_column` | `8` | Column index of the alternate allele frequency field. |
 | `pval_neglog10` | `false` | Indicates whether p-values are stored as negative log10 values (`true`) or raw p-values (`false`). |
 | `ensemblvep_species` | `'homo_sapiens'` | Species identifier for Ensembl VEP annotation. |
 | `ensemblvep_genome` | `'GRCh37'` | Genome assembly version used for annotation. |
@@ -82,7 +84,7 @@ In addition, a general configuration file configs/base.config is provided to adj
 | `magma_window_down` | `10` | Downstream window size (in kb) used when mapping variants to genes in MAGMA. |
 | `magma_gene_location` | `NA` | Path to the Ensembl gene location file used for MAGMA analyses. |
 
-**Note**: Environment files are provided for VEP versions 110, 114, and 115. The VEP version installed in Conda must correspond to the VEP cache version. If a different VEP version is required (e.g., to match an existing VEP cache), an additional environment file named vep_X.yml should be created, where X denotes the desired VEP version.
+**Note**: Environment files are provided for VEP versions 110, 113, 114, and 115. The VEP version installed in Conda must correspond to the VEP cache version. If a different VEP version is required (e.g., to match an existing VEP cache), an additional environment file named vep_X.yml should be created, where X denotes the desired VEP version.
 
 ### Compute Config
 
