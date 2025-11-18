@@ -1,8 +1,8 @@
-# Nextflow Preprocessing Pipeline for DyHealthNet Light Platform
+# Nextflow Preprocessing Pipeline for a GNExT Platform
 
-Data preprocessing for the DyHealthNet Light platform is performed through a Nextflow-based pipeline that enables seamless deployment across different computing environments and automatically ensures scalability for large collections of GWAS summary statistics. 
+Data preprocessing for a GNExT platform is performed through a Nextflow-based pipeline that enables seamless deployment across different computing environments and automatically ensures scalability for large collections of GWAS summary statistics. 
 
-The pipeline provides comprehensive functionality for preparing GWAS summary data for integration into the DyHealthNet Light platform, including data harmonization, variant annotation using the Ensembl Variant Effect Predictor, and, optionally, the execution of gene-based association analyses with the state-of-the-art tool MAGMA.
+The pipeline provides comprehensive functionality for preparing GWAS summary data for integration into the GNExT platform, including data harmonization, variant annotation using the Ensembl Variant Effect Predictor, and, optionally, the execution of gene-based association analyses with the state-of-the-art tool MAGMA.
 
 <img alt="Nextflow_pipeline" src="assets/nextflow_pipeline_schema.png">
 
@@ -12,7 +12,7 @@ The pipeline provides comprehensive functionality for preparing GWAS summary dat
 To start, clone the repository:
 
 ```{bash}
-git clone https://github.com/DyHealthNet/dyhealthnetlight_nf_pipeline.git
+git clone https://github.com/DyHealthNet/gnext_nf_pipeline.git
 ```
 
 ## Installations
