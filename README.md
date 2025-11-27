@@ -4,8 +4,7 @@ Data preprocessing for a GNExT platform is performed through a Nextflow-based pi
 
 The pipeline provides comprehensive functionality for preparing GWAS summary data for integration into the GNExT platform, including data harmonization, variant annotation using the Ensembl Variant Effect Predictor, and, optionally, the execution of gene-based association analyses with the state-of-the-art tool MAGMA.
 
-<img alt="Nextflow_pipeline" src="assets/nextflow_pipeline_schema.png">
-
+<img alt="Nextflow_pipeline" src="assets/GNExT_Pipeline.png">
 
 # Preparation
 
