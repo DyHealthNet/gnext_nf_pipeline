@@ -12,7 +12,7 @@ workflow MAGMA_ANALYSIS {
     main:
     
     bim_file = file("${params.magma_reference_plink}.bim")
-    gene_location_file = file(params.magma_gene_location)
+    gene_location_file = file(params.gene_location)
     magma_annotation = generate_magma_annotation(bim_file,gene_location_file)
 
     // Pre-process normalized files to filter SNPs and create MAGMA input
@@ -39,7 +39,7 @@ workflow MAGMA_ANALYSIS {
             def reference_plink_bim = file("${params.magma_reference_plink}.bim")
             def reference_plink_bed = file("${params.magma_reference_plink}.bed")
             def reference_plink_fam = file("${params.magma_reference_plink}.fam")
-            def gene_location = file(params.magma_gene_location)
+            def gene_location = file(params.gene_location)
             tuple(batch, annotation_file, reference_plink_bim, reference_plink_bed, reference_plink_fam, gene_location)
         }
 

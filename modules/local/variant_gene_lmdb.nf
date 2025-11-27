@@ -18,10 +18,10 @@ process generate_variant_gene_lmdb {
   """
   generate_variant_gene_lmdb.py \
     --vcf ${annotated_vcf} \
-    --gene-file ${params.magma_gene_location} \
+    --gene-file ${params.gene_location} \
     --out-file lmdb-data.mdb \
-    --window-up ${params.magma_window_up} \
-    --window-down ${params.magma_window_down} \
+    --window-up ${params.window_up} \
+    --window-down ${params.window_down} \
     --num-chroms ${chroms.size()}
   """
 }

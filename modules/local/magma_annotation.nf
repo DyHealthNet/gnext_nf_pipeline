@@ -16,9 +16,9 @@ process generate_magma_annotation {
     bash run_magma_annotation.sh \
         ${magma_reference_plink_bim} \
         ${magma_gene_location} \
-        ${params.magma_window_up} \
-        ${params.magma_window_down} \
-        magma_annotation_window_${params.magma_window_up}_up_${params.magma_window_down}_down
+        ${params.window_up} \
+        ${params.window_down} \
+        magma_annotation_window_${params.window_up}_up_${params.window_down}_down
     """
 
 }

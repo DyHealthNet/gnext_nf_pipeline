@@ -9,9 +9,9 @@ workflow CHECK_PARAMETERS {
         'manhattan_peak_pval_threshold' : params.manhattan_peak_pval_threshold,
         'manhattan_peak_sprawl_dist'    : params.manhattan_peak_sprawl_dist,
         'magma_reference_plink'         : params.magma_reference_plink,
-        'magma_gene_location'           : params.magma_gene_location,
-        'magma_window_up'               : params.magma_window_up,
-        'magma_window_down'             : params.magma_window_down
+        'magma_gene_location'           : params.gene_location,
+        'window_up'               : params.window_up,
+        'window_down'             : params.window_down
     ]
 
     if (!params.extend) {

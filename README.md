@@ -64,6 +64,9 @@ In addition, a general configuration file configs/base.config is provided to adj
 | `base_dir` | `NA` | Path to the base directory containing the GWAS summary statistic files (for docker and singularity volume). |
 | `out_dir` | `NA` | Output directory where all processed results and intermediate files will be stored. |
 | `pheno_batch_size` | `5` | Number of phenotypes processed in parallel within a single batch. |
+| `window_up` | `10` | Upstream window size (in kb) used when mapping variants to genes in MAGMA. |
+| `window_down` | `10` | Downstream window size (in kb) used when mapping variants to genes in MAGMA. |
+| `gene_location` | `NA` | Path to the Ensembl gene location file used for MAGMA analyses. |
 | `steps` | `["gene_statistics", "gwas_exploration"]` | List of workflow steps to be executed (e.g., gene-based statistics, exploratory analysis). |
 | `chr_column` | `3` | Column index (1-based) of the chromosome field in the GWAS summary statistics file. |
 | `pos_column` | `4` | Column index of the variant position field. |
@@ -79,9 +82,7 @@ In addition, a general configuration file configs/base.config is provided to adj
 | `ensemblvep_cache_version` | `110` | Version of the Ensembl VEP cache used during annotation. Must match the installed VEP version. |
 | `ensemblvep_cache` | `NA` | **Optional**. Path to pre-existing VEP cache. If no cache existing, cache will be downloaded automatically. |
 | `magma_reference_plink` | `NA` | Path to the PLINK reference panel used by MAGMA for gene-based analyses. |
-| `magma_window_up` | `10` | Upstream window size (in kb) used when mapping variants to genes in MAGMA. |
-| `magma_window_down` | `10` | Downstream window size (in kb) used when mapping variants to genes in MAGMA. |
-| `magma_gene_location` | `NA` | Path to the Ensembl gene location file used for MAGMA analyses. |
+
 
 **Note**: Environment files are provided for VEP versions 110, 113, 114, and 115. The VEP version installed in Conda must correspond to the VEP cache version. If a different VEP version is required (e.g., to match an existing VEP cache), an additional environment file named vep_X.yml should be created, where X denotes the desired VEP version.
 
