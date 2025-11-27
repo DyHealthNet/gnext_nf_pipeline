@@ -6,6 +6,7 @@ include { generate_variant_id_lmdb  } from '../../../modules/local/variant_id_lm
 include { publish_vep_results       } from '../../../modules/local/publish_vep_results.nf'
 include { VCF_ANNOTATE_ENSEMBLVEP   } from '../../nf-core/vcf_annotate_ensemblvep/main'
 include { DOWNLOAD_CACHE_VEP        } from '../download_cache_vep/main'
+include { generate_variant_gene_lmdb } from '../../../modules/local/variant_gene_lmdb.nf'
 
 workflow ANNOTATE_VARIANTS {
     take:
@@ -46,12 +47,16 @@ workflow ANNOTATE_VARIANTS {
     // Generate LMDB database for variant ID mapping
     lmdb_path = generate_variant_id_lmdb(vep_vcf, vep_tbi, chroms.splitText().map{it.trim()}.collect())
 
+    // Generate LMDB database for variant to gene mapping
+    lmdb_gene_path = generate_variant_gene_lmdb(vep_vcf, vep_tbi, chroms.splitText().map{it.trim()}.collect())
+
     emit:
     ref_vcf = vcf_file
     ref_tbi = vcf_tbi
     //anno_vcf = vep_vcf
     //anno_tbi = vep_tbi
     chroms = chroms
+    lmdb_gene_file = lmdb_gene_path.lmdb_data
     //lmdb_data = lmdb_path.lmdb_data
     //lmdb_lock = lmdb_path.lmdb_lock
 }

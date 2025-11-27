@@ -19,6 +19,7 @@ process normalize {
 
   script:
   def neglog_flag = params.pval_neglog10 ? "--pval-neglog10" : ""
+  def sample_size_flag = params.n_samples_column ? "--sample-size-col ${params.n_samples_column}" : ""
 
   // Write manifest.tsv directly
   def manifestContent = pheno_data.collect { phenocode, filename, nr_samples ->
@@ -45,7 +46,8 @@ process normalize {
     ${neglog_flag} \
     --beta-col ${params.beta_column} \
     --se-col ${params.se_column} \
-    --af-col ${params.af_column}
+    --af-col ${params.af_column} \
+    ${sample_size_flag} \
   
   # Get phenocodes from manifest and process each file
   while IFS=\$'\t' read -r filename phenocode; do

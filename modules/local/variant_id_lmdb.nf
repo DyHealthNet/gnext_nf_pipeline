@@ -1,5 +1,5 @@
 process generate_variant_id_lmdb {
-  publishDir "${params.out_dir}/lmdb", mode: 'symlink'
+  publishDir "${params.out_dir}/lmdb_rsid", mode: 'symlink'
   cpus 2
   memory '16 GB'
 

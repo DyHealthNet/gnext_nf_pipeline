@@ -14,7 +14,9 @@ process generate_magma_data_input {
   path "*_magma.tsv", emit: input_files
   path "mapping_summary.tsv", emit: mapping_summary
 
-  script:  
+  script:
+  // Check if we need to include n_samples column
+  def n_samples_flag = params.n_samples_column ? "--include-n-samples" : ""
 
   """
   set -e
@@ -33,5 +35,6 @@ process generate_magma_data_input {
     --max-workers ${task.cpus} \
     --genome-build ${params.ensemblvep_genome} \
     --ref-bim ${magma_reference_plink_bim} \
+    ${n_samples_flag}
   """
 }

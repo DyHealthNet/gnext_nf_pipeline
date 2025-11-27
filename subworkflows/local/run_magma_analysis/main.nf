@@ -15,18 +15,19 @@ workflow MAGMA_ANALYSIS {
     gene_location_file = file(params.magma_gene_location)
     magma_annotation = generate_magma_annotation(bim_file,gene_location_file)
 
-    magma_data_inputs = norm_gz_files.collate(params.pheno_batch_size)
-    magma_input_results = generate_magma_data_input(magma_data_inputs, bim_file)
+    // Pre-process normalized files to filter SNPs and create MAGMA input
+    all_norm_files = norm_gz_files.collect()
+    magma_input_results = generate_magma_data_input(all_norm_files, bim_file)
     
-    all_magma_inputs = magma_input_results.input_files.flatten().map { file_obj -> 
-        def phenocode = file_obj.baseName.replaceFirst(/_magma$/, '')
-        tuple(phenocode, file_obj)
+    // Map preprocessed MAGMA input files to phenocodes
+    all_magma_inputs = magma_input_results.input_files.flatten().map { tsv_file ->
+        def phenocode = tsv_file.baseName.replaceFirst(/_magma$/, '')
+        tuple(phenocode, tsv_file)
     }
 
     // Join with GWAS metadata to get sample sizes
     meta_info = gwas_rows.map { pheno, gwas_file, n -> tuple(pheno, n)}
     magma_with_meta = all_magma_inputs.join(meta_info)
-
     
     magma_batches = magma_with_meta.collate(params.pheno_batch_size)
     

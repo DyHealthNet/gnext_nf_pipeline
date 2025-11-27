@@ -7,6 +7,7 @@ process generate_top_hits {
   input:
   path manhattan_files_file
   path pheno_file
+  path lmdb_gene_file
 
   output:
   path "top_hits.json"
@@ -18,6 +19,7 @@ process generate_top_hits {
       --phenocode-file ${pheno_file} \
       --out top_hits.json \
       --pval-cutoff ${params.top_hits_pval_cutoff} \
-      --max-limit ${params.top_hits_max_limit}
+      --max-limit ${params.top_hits_max_limit} \
+      --lmdb-gene-file ${lmdb_gene_file}
     """
 }

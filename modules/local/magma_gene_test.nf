@@ -14,8 +14,11 @@ process run_magma_gene_test {
         path "*.log", emit: magma_logs
 
     script:
-    // Construct a manifest safely in Groovy first
+    // Construct a manifest with phenocode, file, and sample size
     def manifest = magma_input_files.collect { p, f, n -> "${p}\t${f}\t${n}" }.join('\n')
+    
+    // Determine if sample sizes come from pheno file (gwas_rows) or from GWAS file column
+    def use_n_column = params.n_samples_column ? "true" : "false"
 
     // Reference file
     def magma_reference_plink_prefix = magma_reference_plink_bim.toString().replaceFirst(/\.bim$/, '')
@@ -26,15 +29,30 @@ process run_magma_gene_test {
     printf "%s\n" '${manifest}' > manifest.tsv
 
     IFS=\$(printf '\\t')
-    while read -r phenocode file nr_samples <&3; do
-        echo "Running MAGMA for \$phenocode using \$file"
+    while read -r phenocode magma_file nr_samples <&3; do
+        echo "Running MAGMA for \$phenocode using preprocessed file \$magma_file"
+        
+        # Determine sample size parameter for MAGMA
+        if [ "${use_n_column}" = "true" ]; then
+            # Sample size is in the preprocessed MAGMA file (column 3)
+            n_param="ncol=3"
+            echo "Using sample size from n_samples column (column 3) in preprocessed file"
+        else
+            # Sample size comes from pheno file (gwas_rows)
+            n_param="N=\${nr_samples}"
+            echo "Using sample size from pheno file: \${nr_samples}"
+        fi
+        
+        # Run MAGMA with preprocessed file
+        # Preprocessed columns: SNP=1, P=2, optionally n_samples=3
         bash run_magma_gene_test.sh \
             ${magma_reference_plink_prefix} \
             ${annotation_file} \
-            "\$file" \
+            "\$magma_file" \
             ${task.cpus} \
-            "\$nr_samples" \
+            "\$n_param" \
             "\$phenocode"_magma
+        
         parse_magma_gene_output.py --magma-output "\$phenocode"_magma.genes.out --gene-location ${magma_gene_location}
     done 3< manifest.tsv
     """

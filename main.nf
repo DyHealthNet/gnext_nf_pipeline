@@ -18,8 +18,15 @@ workflow {
         .fromPath(params.pheno_file)
         .splitCsv(header: true)
         .map { row ->
-            def n_int = row.nr_samples.toString().replace('.0', '').toInteger()
-            tuple(row.phenocode, row.filename.toString(), n_int)
+            // Check if nr_samples should be read from pheno_file or GWAS summary stats
+            if (params.n_samples_column) {
+                // nr_samples will be read from GWAS file, use null as placeholder
+                tuple(row.phenocode, row.filename.toString(), null)
+            } else {
+                // nr_samples must be present in pheno_file
+                def n_int = row.nr_samples.toString().replace('.0', '').toInteger()
+                tuple(row.phenocode, row.filename.toString(), n_int)
+            }
         }
 
     // Normalize GWAS summary statistics
@@ -33,7 +40,7 @@ workflow {
         ANNOTATE_VARIANTS(NORMALIZE_GWAS.out.vcf)
 
         // Generate JSONs for Manhattan & QQ plots, and top hits
-        GENERATE_JSONS(NORMALIZE_GWAS.out.json)
+        GENERATE_JSONS(NORMALIZE_GWAS.out.json, ANNOTATE_VARIANTS.out.lmdb_gene_file)
 
         // Generate per-chromosome BGZ files
         GENERATE_BGZ_FILES(
@@ -51,5 +58,5 @@ workflow {
         )
     }
 
-    SNAPSHOT_PARAMETERS()  
+    SNAPSHOT_PARAMETERS() 
 }
