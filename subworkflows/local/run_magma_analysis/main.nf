@@ -3,11 +3,13 @@ nextflow.enable.dsl=2
 include{generate_magma_annotation} from '../../../modules/local/magma_annotation.nf'
 include{generate_magma_data_input} from '../../../modules/local/magma_input_gwas.nf'
 include{run_magma_gene_test} from '../../../modules/local/magma_gene_test.nf'
+include {generate_gene_magma_bgz} from '../../../modules/local/gene_magma_bgz.nf'
 
 workflow MAGMA_ANALYSIS {
     take:
         norm_gz_files   // Channel with normalized GWAS results
         gwas_rows       // Channel with GWAS metadata
+        mapped_genes  // Channel with mapped gene information
 
     main:
     
@@ -44,6 +46,11 @@ workflow MAGMA_ANALYSIS {
         }
 
     magma_final_results = run_magma_gene_test(magma_input_final)
+
+    // Collect all MAGMA results from all batches into a single list
+    all_magma_results = magma_final_results.magma_results.collect()
+    
+    magma_gene_bgz = generate_gene_magma_bgz(mapped_genes, all_magma_results)
 
     //emit:
     //magma_final_results

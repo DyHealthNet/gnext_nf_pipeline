@@ -57,6 +57,7 @@ workflow ANNOTATE_VARIANTS {
     //anno_tbi = vep_tbi
     chroms = chroms
     lmdb_gene_file = lmdb_gene_path.lmdb_data
+    mapped_genes = lmdb_gene_path.genes_metadata
     //lmdb_data = lmdb_path.lmdb_data
     //lmdb_lock = lmdb_path.lmdb_lock
 }

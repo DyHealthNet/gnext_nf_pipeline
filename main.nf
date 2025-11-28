@@ -54,7 +54,8 @@ workflow {
     if(params.steps.contains("gene_statistics")){
         MAGMA_ANALYSIS(
             NORMALIZE_GWAS.out.magma,
-            gwas_rows
+            gwas_rows,
+            ANNOTATE_VARIANTS.out.mapped_genes
         )
     }
 

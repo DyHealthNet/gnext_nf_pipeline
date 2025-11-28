@@ -46,15 +46,15 @@ class LMDBGeneQuery:
                 genes = msgpack.unpackb(value_bytes, raw=False)
                 # Sort by distance (already sorted, but explicit for clarity)
                 genes_sorted = sorted(genes, key=lambda x: x[2])
-                # Return only symbols
-                return [symbol for ensg_id, symbol, distance in genes_sorted]
-            return []
+                # Return dictionary mapping ensg_id to symbol
+                return {ensg_id:symbol for ensg_id, symbol, distance in genes_sorted}
+            return {}
         except lmdb.Error as e:
             logger.error(f"LMDB error for {chrom}:{pos} - {e}")
-            return []
+            return {}
         except Exception as e:
             logger.error(f"Error getting genes for variant {chrom}:{pos} - {e}")
-            return []
+            return {}
 
 
 def get_hits(manhattan_file, pval_cutoff, pheno_dt, lmdb_gene_file):
@@ -91,7 +91,6 @@ def get_hits(manhattan_file, pval_cutoff, pheno_dt, lmdb_gene_file):
                         v["top_variant"] = f"{chrom}_{pos}_{ref}/{alt} ({rsid})"
                     else:
                         v["top_variant"] = f"{chrom}_{pos}_{ref}/{alt}"
-                    alt_allele_freq = v.get("alt_allele_freq")
                     v["nearest_genes"] = gene_query.get_genes_for_variant(chrom, pos)
                     peak_to_best[key] = v
 
