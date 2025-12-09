@@ -40,7 +40,7 @@ workflow {
         ANNOTATE_VARIANTS(NORMALIZE_GWAS.out.vcf)
 
         // Generate JSONs for Manhattan & QQ plots, and top hits
-        GENERATE_JSONS(NORMALIZE_GWAS.out.json, ANNOTATE_VARIANTS.out.lmdb_gene_file)
+        GENERATE_JSONS(NORMALIZE_GWAS.out.json, gwas_rows, ANNOTATE_VARIANTS.out.lmdb_gene_file)
 
         // Generate per-chromosome BGZ files
         GENERATE_BGZ_FILES(

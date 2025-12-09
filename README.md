@@ -4,7 +4,7 @@ Data preprocessing for a GNExT platform is performed through a Nextflow-based pi
 
 The pipeline provides comprehensive functionality for preparing GWAS summary data for integration into the GNExT platform, including data harmonization, variant annotation using the Ensembl Variant Effect Predictor, and, optionally, the execution of gene-based association analyses with the state-of-the-art tool MAGMA.
 
-<img alt="Nextflow_pipeline" src="assets/GNExT_Pipeline.png">
+<img alt="Nextflow_pipeline" src="assets/GNExT_pipeline.png" width="30%">
 
 # Preparation
 
@@ -41,9 +41,7 @@ Each row represents one phenotype, with the following columns:
 | `description`  | Description of the phenotype or trait analyzed in the corresponding GWAS summary statistics file. |
 | `category`  | Group/category of the phenotype or trait analyzed in the corresponding GWAS summary statistics file. |
 | `filename` | **Absolute** path to the GWAS summary statistics file associated with the phenotype. |
-| `nr_samples` | Number of samples included in the GWAS for the respective phenotype, used for downstream analyses such as MAGMA gene-based testing. |
-
-These column names are mandatroy, while additional columns may be included.
+| `nr_samples` | OPTIONAL: Number of samples included in the GWAS for the respective phenotype, used for downstream analyses such as MAGMA gene-based testing. Can also be included in the GWAS files.|
 
 The column positions for the required fields (chrom, pos, ref, alt, p-value, beta, se, af) can be defined within the study-specific configuration.
 
@@ -133,6 +131,13 @@ We support execution through Conda, Docker, or Singularity environments (e.g., -
 nextflow run main.nf -profile slurm,docker
 ```
 
+To resume the workflow:
+
+```bash
+nextflow run main.nf -profile slurm,docker -resume
+```
+
+
 # Replace Symlinks by Copying Files
 
 The Nextflow pipeline generates symbolic links in the output directory. Therefore, as a final step, navigate to the output directory and execute the following command:
@@ -148,5 +153,16 @@ find . -type l -exec sh -c '
     echo "Skipping broken symlink: $1 -> $target"
   fi
 ' _ {} \;
+```
+
+# Extend Existing Run With Additional Data
+
+To extend an existing run with additional traits, the previous execution must have completed successfully, and the corresponding work directory containing the intermediate results must still be available.
+
+Only change the pheno_file, append columns at the end (not in between rows), and run the workflow:
+
+
+```bash
+nextflow run main.nf -profile slurm,docker -resume
 ```
 

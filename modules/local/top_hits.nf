@@ -1,4 +1,5 @@
 process generate_top_hits {
+  cache 'lenient'
   publishDir "${params.out_dir}/top_hits", mode: 'symlink'
   cpus 1
   

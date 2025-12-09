@@ -6,10 +6,24 @@ include {generate_top_hits} from '../../../modules/local/top_hits.nf'
 workflow GENERATE_JSONS {
     take:
     norm_gz_files
+    gwas_rows
     lmdb_gene_file
     
     main:
-    norm_batches = norm_gz_files.collate(params.pheno_batch_size)
+
+    // Create channel of (phenocode, file) pairs
+    norm_files_ch = norm_gz_files.map { file ->
+        def phenocode = file.baseName.replaceFirst(/\.gz$/, '')
+        tuple(phenocode, file)
+    }
+
+    // Join gwas_rows with norm_files by phenocode, then batch
+    norm_batches = gwas_rows
+        .map { pheno, gwas_file, n -> tuple(pheno, gwas_file, n) }
+        .join(norm_files_ch)  // Joins on first element (phenocode)
+        .map { pheno, gwas_file, n, norm_file -> tuple(pheno, norm_file) }
+        .collate(params.pheno_batch_size)
+
     manhattan_qq_results = generate_manhattan_qq(norm_batches)
     all_manhattan_files = manhattan_qq_results.manhattan
 

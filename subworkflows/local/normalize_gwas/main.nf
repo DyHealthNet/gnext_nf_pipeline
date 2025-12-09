@@ -9,7 +9,7 @@ workflow NORMALIZE_GWAS {
     main:
     gwas_batches = gwas_rows.collate(params.pheno_batch_size)
     norm_results = normalize(gwas_batches)
-    new_norm_gz = norm_results.gz.flatten()
+    new_norm_gz = norm_results.gz.collect().flatten()
 
     // Create independent channel copies for new files only
     new_norm_gz.multiMap { item ->

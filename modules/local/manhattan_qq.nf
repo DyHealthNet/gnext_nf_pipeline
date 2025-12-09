@@ -1,4 +1,5 @@
 process generate_manhattan_qq {
+  cache 'lenient'
   publishDir "${params.out_dir}/manhattan_qq", mode: 'symlink'
   tag { "${gz_files.size()}" }
 
@@ -8,7 +9,7 @@ process generate_manhattan_qq {
 
 
   input:
-  val gz_files
+  val gz_files  // list of tuples (phenocode, file)
 
   output:
   path "*_manhattan.json", emit: manhattan
@@ -16,16 +17,17 @@ process generate_manhattan_qq {
 
 
   script:
+  
+  // Write manifest.tsv directly (similar to MAGMA)
+  def manifestContent = gz_files.collect { phenocode, file ->
+        "${file}\t${phenocode}"
+    }.join("\n")
 
   """
-  # Clean up the Nextflow stringified list "[a, b, c]" -> "a b c"
-  files=\$(echo $gz_files | tr -d '[],')
+  set -e
   
-  # Write manifest.tsv with <file>\t<basename>
-  > manifest.tsv
-  for f in \$files; do
-    echo -e "\$f\t\$(basename \$f .gz)" >> manifest.tsv
-  done
+  # Write manifest.tsv inside the task dir
+  printf "%s\n" '${manifestContent}' > manifest.tsv
 
   export PYTHONPATH=${projectDir}
   generate_manhattan_qq.py --input-files manifest.tsv \
