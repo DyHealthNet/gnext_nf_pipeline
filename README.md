@@ -4,7 +4,7 @@ Data preprocessing for a GNExT platform is performed through a Nextflow-based pi
 
 The pipeline provides comprehensive functionality for preparing GWAS summary data for integration into the GNExT platform, including data harmonization, variant annotation using the Ensembl Variant Effect Predictor, and, optionally, the execution of gene-based association analyses with the state-of-the-art tool MAGMA.
 
-<img alt="Nextflow_pipeline" src="assets/GNExT_pipeline.png" width="30%">
+<img alt="Nextflow_pipeline" src="assets/Gnext_pipeline.png" width="40%">
 
 # Preparation
 
@@ -24,7 +24,7 @@ Details on how to install Java and Nextflow can be found here: https://www.nextf
 
 For running MAGMA, appropriate reference data are required. The 1000 Genomes Project is commonly employed as the reference population.
 
-The reference data used in this study are publicly available on Zenodo (\href{https://doi.org/10.5281/zenodo.17530575}{10.5281/zenodo.17530575}). Additional reference datasets, including Ensembl-based gene location files, can be obtained from the FUMA repository (\url{https://fuma.ctglab.nl/downloadPage}).
+The reference data used in this study are publicly available on Zenodo [10.5281/zenodo.17530575](https://doi.org/10.5281/zenodo.17530575). Additional reference datasets, including Ensembl-based gene location files, can be obtained from the FUMA repository ([https://fuma.ctglab.nl/downloadPage](https://fuma.ctglab.nl/downloadPage)).
 
 We rely on these reference files because they use variant identifiers of the form chr:pos:alleles, which are independent of dbSNP releases, ensuring consistency across genome builds.
 
