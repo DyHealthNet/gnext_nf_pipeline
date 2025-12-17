@@ -16,7 +16,7 @@ workflow {
     // Read phenotype manifest CSV -> deterministic batching for stable caching
     gwas_rows = Channel
         .fromPath(params.pheno_file)
-        .splitCsv(header: true)
+        .splitCsv(header: true, quote: '"')
         .map { row ->
             // Check if nr_samples should be read from pheno_file or GWAS summary stats
             if (params.n_samples_column) {

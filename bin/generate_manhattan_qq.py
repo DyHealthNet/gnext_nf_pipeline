@@ -11,10 +11,23 @@ import gzip
 import sys, os  
 import pandas as pd
 from concurrent.futures import ProcessPoolExecutor, as_completed 
-
-from locuszoom import manhattan, qq
-from zorp import sniffers, lookups
 import time
+
+# Import zorp with retry logic to handle race conditions
+max_retries = 5
+for attempt in range(max_retries):
+    try:
+        from locuszoom import manhattan, qq
+        from zorp import sniffers, lookups
+        break
+    except json.JSONDecodeError as e:
+        if attempt < max_retries - 1:
+            wait_time = 2 ** attempt  # exponential backoff: 1, 2, 4, 8, 16 seconds
+            print(f"Zorp import failed (attempt {attempt + 1}/{max_retries}), retrying in {wait_time}s...", file=sys.stderr)
+            time.sleep(wait_time)
+        else:
+            print(f"Failed to import zorp after {max_retries} attempts", file=sys.stderr)
+            raise
 
 def generate_manhattan(reader, out_filename: str, manhattan_num_unbinned=500, manhattan_peak_max_count=500, manhattan_peak_pval_threshold=1e-6, manhattan_peak_sprawl_dist=200_000) -> bool:
     binner = manhattan.Binner(
@@ -77,6 +90,14 @@ def main():
     parser.add_argument("--manhattan-peak-sprawl-dist", type=int, default=200_000, help="Sprawl distance for peaks in Manhattan plot")
 
     args = parser.parse_args()
+
+    # Pre-initialize zorp lookups in main process to avoid race condition in workers
+    # This forces the manifest download/update to happen once before forking
+    try:
+        _ = lookups.get_dbsnp_by_rsid()  # trigger asset initialization
+        print("Zorp assets pre-initialized successfully", file=sys.stderr)
+    except Exception as e:
+        print(f"Warning: Could not pre-initialize zorp assets: {e}", file=sys.stderr)
 
     input_files_dt = pd.read_csv(args.input_files, sep="\t", header=None, names=["file_path", "phenocode"])
     with ProcessPoolExecutor(max_workers=args.max_workers) as executor:

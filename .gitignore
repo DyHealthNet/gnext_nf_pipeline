@@ -8,6 +8,7 @@ output/
 .nextflow*
 .cache/
 .nf-test/
+*_work/
 
 # Logs
 *.log

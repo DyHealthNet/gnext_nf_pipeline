@@ -26,6 +26,9 @@ process generate_manhattan_qq {
   """
   set -e
   
+  # Pre-create zorp assets directory to avoid race condition
+  mkdir -p "\${CONDA_PREFIX}/share/.assets/zorp" || true
+  
   # Write manifest.tsv inside the task dir
   printf "%s\n" '${manifestContent}' > manifest.tsv
 

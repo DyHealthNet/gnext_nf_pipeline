@@ -17,8 +17,22 @@ workflow MAGMA_ANALYSIS {
     gene_location_file = file(params.gene_location)
     magma_annotation = generate_magma_annotation(bim_file,gene_location_file)
 
-    // Pre-process normalized files to filter SNPs and create MAGMA input
-    all_norm_files = norm_gz_files.collect()
+    // Create channel of (phenocode, file) pairs
+    norm_files_ch = norm_gz_files.map { file ->
+        def phenocode = file.baseName.replaceFirst(/\.gz$/, '')
+        tuple(phenocode, file)
+    }
+
+    // Join gwas_rows with norm_files by phenocode to ensure deterministic ordering
+    norm_files_ordered = gwas_rows
+        .map { pheno, gwas_file, n -> tuple(pheno, gwas_file, n) }
+        .join(norm_files_ch)  // Joins on first element (phenocode)
+        .map { pheno, gwas_file, n, norm_file -> norm_file }
+
+    // Batch normalized files for MAGMA input generation
+    all_norm_files = norm_files_ordered.collate(params.pheno_batch_size)
+
+    // Batch generate MAGMA input files
     magma_input_results = generate_magma_data_input(all_norm_files, bim_file)
     
     // Map preprocessed MAGMA input files to phenocodes
@@ -27,11 +41,12 @@ workflow MAGMA_ANALYSIS {
         tuple(phenocode, tsv_file)
     }
 
-    // Join with GWAS metadata to get sample sizes
-    meta_info = gwas_rows.map { pheno, gwas_file, n -> tuple(pheno, n)}
-    magma_with_meta = all_magma_inputs.join(meta_info)
-    
-    magma_batches = magma_with_meta.collate(params.pheno_batch_size)
+    // Use gwas_rows to drive deterministic ordering, join with MAGMA input files
+    magma_batches = gwas_rows
+        .map { pheno, gwas_file, n -> tuple(pheno, n) }
+        .join(all_magma_inputs)  // Joins on phenocode
+        .map { pheno, n, tsv_file -> tuple(pheno, tsv_file, n) }
+        .collate(params.pheno_batch_size)
     
     magma_input_final = magma_batches
         .combine(magma_annotation)

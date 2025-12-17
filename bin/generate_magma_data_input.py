@@ -108,7 +108,7 @@ def generate_MAGMA_gwas_input_file(gwas_path: str, phenocode: str, bim_ids: set,
             if chrom not in bim_chr:
                 chrom_mismatch += 1
 
-            gwas_id = f"{chrom}:{variant.pos}:{':'.join(sorted([variant.ref, variant.alt]))}"
+            gwas_id = f"{chrom}:{variant.pos}:{variant.ref}:{variant.alt}"
             total += 1
             
             if gwas_id in bim_ids:

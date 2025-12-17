@@ -1,4 +1,4 @@
-name: dyhealthnetlight_nf_pipeline
+name: gnext_nf_pipeline
 channels:
   - conda-forge
   - bioconda
@@ -11,7 +11,7 @@ dependencies:
   - pandas
   - scipy
   - pip
-  - bioconda::ensembl-vep=110
+  - parallel  
   - pip:
       - msgpack
       - lmdb
