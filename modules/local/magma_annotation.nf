@@ -1,12 +1,13 @@
 process generate_magma_annotation {
     publishDir "${params.out_dir}/magma_input", mode: 'symlink'
 
+    cpus 1
+    memory '64 GB'
+
     input:
     path magma_reference_plink_bim
     path magma_gene_location
 
-    
-    
     output:
     path "*.genes.annot"
 

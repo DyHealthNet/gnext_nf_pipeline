@@ -24,11 +24,11 @@ Details on how to install Java and Nextflow can be found here: https://www.nextf
 
 For running MAGMA, appropriate reference data are required. The 1000 Genomes Project is commonly employed as the reference population.
 
-The reference data used in this study are publicly available on Zenodo [10.5281/zenodo.17530575](https://doi.org/10.5281/zenodo.17530575). Additional reference datasets, including Ensembl-based gene location files, can be obtained from the FUMA repository ([https://fuma.ctglab.nl/downloadPage](https://fuma.ctglab.nl/downloadPage)).
-
-We rely on these reference files because they use variant identifiers of the form chr:pos:alleles, which are independent of dbSNP releases, ensuring consistency across genome builds.
+Reference data is deposited on Zenodo https://doi.org/10.5281/zenodo.17940903, including PLINK files for GRCh37 and GRCh38 across five super populations as well as Ensembl protein-coding gene annotation files for GRCh37 and GRCh38 from Ensembl releases 114 and 115.
 
 After downloading, the corresponding paths to the reference files should be updated in the nextflow.config file.
+
+**Note**: For alternative Ensembl versions of the gene annotation files, or for details on how the reference data were generated, please consult the GitHub repository at https://github.com/DyHealthNet/gnext_reference_data.git. 
 
 ## Prepare Your Data
 
