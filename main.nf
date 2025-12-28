@@ -37,7 +37,7 @@ workflow {
     if(params.steps.contains("gwas_exploration")){
 
         // Annotate variants using Ensembl VEP
-        ANNOTATE_VARIANTS(NORMALIZE_GWAS.out.vcf)
+        ANNOTATE_VARIANTS(NORMALIZE_GWAS.out.vcf, gwas_rows)
 
         // Generate JSONs for Manhattan & QQ plots, and top hits
         GENERATE_JSONS(NORMALIZE_GWAS.out.json, gwas_rows, ANNOTATE_VARIANTS.out.lmdb_gene_file)
