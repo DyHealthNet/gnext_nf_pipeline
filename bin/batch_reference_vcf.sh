@@ -24,7 +24,7 @@ cat "$BATCH_LIST" \
       | awk -F'\t' 'BEGIN{OFS=\"\t\"} {print \$1, \$2, \".\", \$3, \$4, \".\", \".\", \".\"}' \
       && echo 'Done: {/}' >&2
   " \
-  | sort -k1,1 -k2,2n -S50% --parallel="$NUM_JOBS" --compress-program=gzip -T "$TMP_DIR" \
+  | sort -k1,1 -k2,2n -S10G --parallel="$NUM_JOBS" --compress-program=gzip -T "$TMP_DIR" \
   | uniq \
   >> "$OUTPUT_VCF"
 

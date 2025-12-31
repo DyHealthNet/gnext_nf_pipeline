@@ -24,20 +24,32 @@ workflow ANNOTATE_VARIANTS {
     }
 
     // Join gwas_rows with norm_files by phenocode, then batch
+    // Create a map for fast lookup while preserving gwas_rows order
+    norm_files_map = norm_files_ch
+        .toList()
+        .map { files -> files.collectEntries { pheno, file -> [pheno, file] } }
+
     norm_batches = gwas_rows
-    .map { pheno, gwas_file, n -> tuple(pheno, gwas_file, n) }
-    .join(norm_files_ch)
-    .map { pheno, gwas_file, n, norm_file -> tuple(norm_file, pheno) }
-    .collate(params.pheno_batch_size)
-    .toList()
-    .flatMap { batches -> 
-        batches.withIndex().collect { batch, idx -> 
-            tuple(idx, batch.collect { it[0] })  // Extracts just the norm_files
+        .map { pheno, gwas_file, n -> tuple(pheno, gwas_file, n) }
+        .combine(norm_files_map)
+        .map { pheno, gwas_file, n, file_map -> 
+            file_map[pheno] ? tuple(file_map[pheno], pheno) : null
         }
-    }
+        .filter { it != null }
+        .collate(params.pheno_batch_size)
+        .toList()
+        .flatMap { batches -> 
+            batches.withIndex().collect { batch, idx -> 
+                tuple(idx, batch.collect { it[0] })
+            }
+        }
+        
     batch_results = generate_batch_reference_vcf(norm_batches)
     
     vcf_files = merge_batch_reference_vcfs(batch_results.collect())
+
+    vcf_files.vcf.view { "VCF emitted: $it" }
+    vcf_files.vcf_tbi.view { "TBI emitted: $it" }
     
     // Generate reference VCF file including all unique variants
     //vcf_files = generate_vcf(norm_gz_files.collect())

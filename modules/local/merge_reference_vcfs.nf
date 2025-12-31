@@ -1,12 +1,8 @@
-#!/usr/bin/env nextflow
-
-/*
- * merge_vcfs.nf: Nextflow process for merging batch VCFs
- * Usage: Provide a list of batch VCFs as input, outputs a merged VCF
- */
-
 process merge_batch_reference_vcfs {
-    publishDir "${params.outdir}", mode: 'copy'
+    publishDir "${params.out_dir}/annotate", mode: 'symlink'
+
+    cpus params.vcf_cpus ?: 16
+    memory params.vcf_memory ?: '64 GB'
 
     input:
     path(batch_vcfs)
@@ -18,6 +14,9 @@ process merge_batch_reference_vcfs {
 
     script:
     """
-    bash bin/merge_reference_vcfs.sh full_variants.vcf ${batch_vcfs.join(' ')}
+    set -e
+    # Create manifest.txt from staged input files
+    ls *.vcf > manifest.txt
+    merge_reference_vcfs.sh manifest.txt full_variants.vcf ${params.vcf_cpus}
     """
 }
