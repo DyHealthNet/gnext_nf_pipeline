@@ -29,11 +29,13 @@ process normalize {
   """
   set -e
 
-  # Write manifest.tsv inside the task dir
-  printf "%s\n" '${manifestContent}' > manifest.tsv
+  # Use heredoc to write manifest - safer for special characters
+  cat > manifest.tsv << 'END_MANIFEST'
+  ${manifestContent}
+  END_MANIFEST
 
-  echo "Manifest written:"
-  cat manifest.tsv
+  echo "Manifest file created!"
+
   
   normalize.py \
     --input-files manifest.tsv \

@@ -29,8 +29,12 @@ process generate_manhattan_qq {
   # Pre-create zorp assets directory to avoid race condition
   mkdir -p "\${CONDA_PREFIX}/share/.assets/zorp" || true
   
-  # Write manifest.tsv inside the task dir
-  printf "%s\n" '${manifestContent}' > manifest.tsv
+  # Use heredoc to write manifest - safer for special characters
+  cat > manifest.tsv << 'END_MANIFEST'
+  ${manifestContent}
+  END_MANIFEST
+
+  echo "Manifest file created!"
 
   export PYTHONPATH=${projectDir}
   generate_manhattan_qq.py --input-files manifest.tsv \

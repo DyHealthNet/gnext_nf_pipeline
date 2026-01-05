@@ -25,8 +25,12 @@ process run_magma_gene_test {
     """
     set -e
 
-    # Write the manifest to a file in the task working directory
-    printf "%s\n" '${manifest}' > manifest.tsv
+    # Use heredoc to write manifest - safer for special characters
+    cat > manifest.tsv << 'END_MANIFEST'
+    ${manifestContent}
+    END_MANIFEST
+
+    echo "Manifest file created!"
 
     IFS=\$(printf '\\t')
     while read -r phenocode magma_file nr_samples <&3; do

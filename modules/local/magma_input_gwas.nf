@@ -18,17 +18,22 @@ process generate_magma_data_input {
   // Check if we need to include n_samples column
   def n_samples_flag = params.n_samples_column ? "--include-n-samples" : ""
 
+  // Create manifest content in Groovy (no shell interpretation)
+  def manifestContent = gz_files.collect { file ->
+      def basename = file.name.replaceAll(/\.gz$/, '')
+      "${file}\t${basename}"
+  }.join('\n')
+
+
   """
   set -e
 
-  # Clean up the Nextflow stringified list "[a, b, c]" -> "a b c"
-  files=\$(echo $gz_files | tr -d '[],')
-  
-  # Write manifest.tsv with <file>\t<basename>
-  > manifest.tsv
-  for f in \$files; do
-    echo -e "\$f\t\$(basename \$f .gz)" >> manifest.tsv
-  done
+  # Write manifest using heredoc
+  cat > manifest.tsv << 'END_MANIFEST'
+  ${manifestContent}
+  END_MANIFEST
+
+  echo "Manifest created!"
 
   generate_magma_data_input.py \
     --input-files manifest.tsv \

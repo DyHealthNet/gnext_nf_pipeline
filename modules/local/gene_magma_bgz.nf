@@ -11,18 +11,21 @@ process generate_gene_magma_bgz {
     path "lmdb-data.mdb-lock", emit: lmdb_lock
 
     script:
+
+    // Build manifest in Groovy - safe from shell interpretation
+    def manifestContent = magma_files.collect { file ->
+        def phenocode = file.toString().replaceAll(/_magma\.genes\.out$/, '')
+        phenocode = new File(phenocode).name  // Get basename
+        "${phenocode}\t${file}"
+    }.join('\n')
     
     """
-    # Clean up the Nextflow stringified list "[a, b, c]" -> "a b c"
-    files=\$(echo ${magma_files} | tr -d '[],')
+    # Write manifest safely using heredoc
+    cat > manifest.tsv << 'END_MANIFEST'
+    ${manifestContent}
+    END_MANIFEST
 
-    # Write manifest.tsv with phenocode<tab>file format
-    > manifest.tsv
-    for f in \$files; do
-        # Extract phenocode by removing _magma.genes.out suffix
-        phenocode=\$(basename "\$f" _magma.genes.out)
-        echo -e "\${phenocode}\t\${f}" >> manifest.tsv
-    done
+    echo "Manifest file created!"
 
     generate_gene_magma_bgz.py \
         --gene-file ${mapped_genes} \
