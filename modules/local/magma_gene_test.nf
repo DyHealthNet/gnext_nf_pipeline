@@ -15,7 +15,7 @@ process run_magma_gene_test {
 
     script:
     // Construct a manifest with phenocode, file, and sample size
-    def manifest = magma_input_files.collect { p, f, n -> "${p}\t${f}\t${n}" }.join('\n')
+    def manifestContent = magma_input_files.collect { p, f, n -> "${p}\t${f}\t${n}" }.join('\n')
     
     // Determine if sample sizes come from pheno file (gwas_rows) or from GWAS file column
     def use_n_column = params.n_samples_column ? "true" : "false"
@@ -27,8 +27,8 @@ process run_magma_gene_test {
 
     # Use heredoc to write manifest - safer for special characters
     cat > manifest.tsv << 'END_MANIFEST'
-    ${manifestContent}
-    END_MANIFEST
+${manifestContent}
+END_MANIFEST
 
     echo "Manifest file created!"
 

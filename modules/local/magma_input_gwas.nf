@@ -30,8 +30,8 @@ process generate_magma_data_input {
 
   # Write manifest using heredoc
   cat > manifest.tsv << 'END_MANIFEST'
-  ${manifestContent}
-  END_MANIFEST
+${manifestContent}
+END_MANIFEST
 
   echo "Manifest created!"
 

@@ -22,8 +22,8 @@ process generate_gene_magma_bgz {
     """
     # Write manifest safely using heredoc
     cat > manifest.tsv << 'END_MANIFEST'
-    ${manifestContent}
-    END_MANIFEST
+${manifestContent}
+END_MANIFEST
 
     echo "Manifest file created!"
 

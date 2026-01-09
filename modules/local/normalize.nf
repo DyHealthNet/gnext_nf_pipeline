@@ -31,8 +31,8 @@ process normalize {
 
   # Use heredoc to write manifest - safer for special characters
   cat > manifest.tsv << 'END_MANIFEST'
-  ${manifestContent}
-  END_MANIFEST
+${manifestContent}
+END_MANIFEST
 
   echo "Manifest file created!"
 

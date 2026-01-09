@@ -14,7 +14,7 @@ process generate_batch_reference_vcf {
     """
     set -e
     # Create manifest.txt from staged input files
-    ls *.gz > manifest.txt
+    for f in *.gz; do printf '%s\\n' "\$f"; done > manifest.txt
     batch_reference_vcf.sh manifest.txt batch_variants_${batch_id}.vcf ${params.vcf_cpus}
     """
 }
