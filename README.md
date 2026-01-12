@@ -47,11 +47,11 @@ The column positions for the required fields (chrom, pos, ref, alt, p-value, bet
 
 ## Fill the Nextflow Config Files
 
-Study-specific parameters must be defined in the configuration file configs/study_specific.config.
+Study-specific parameters must be defined in the configuration file `configs/study_specific.config`.
 
-Computational settings such as memory allocation, runtime limits, and other scheduler-related parameters should be specified in configs/compute_slurm.config.
+Computational settings such as memory allocation, runtime limits, and other scheduler-related parameters should be specified in `configs/compute_slurm.config`.
 
-In addition, a general configuration file configs/base.config is provided to adjust parameters related to Manhattan and top hits generation as well as VEP window distances. These parameters are preconfigured with suitable defaults and typically do not require manual modification.
+In addition, a general configuration file `configs/base.config` is provided to adjust parameters related to Manhattan and top hits generation as well as VEP window distances. These parameters are preconfigured with suitable defaults and typically do not require manual modification.
 
 
 ### Study-Specific Config
@@ -83,6 +83,8 @@ In addition, a general configuration file configs/base.config is provided to adj
 
 
 **Note**: Environment files are provided for VEP versions 110, 113, 114, and 115. The VEP version installed in Conda must correspond to the VEP cache version. If a different VEP version is required (e.g., to match an existing VEP cache), an additional environment file named vep_X.yml should be created, where X denotes the desired VEP version.
+
+**Examples**: We provide two study-specific example configuration files that have been preconfigured for setting up two GNExT instances. The `configs/olfaction.config` and `configs/panukbb.config` are example study-specific configuration files for the two GNExT instances accessible at http://olfaction.gnext.gm.eurac.edu/ and http://panukbb.gnext.gm.eurac.edu/. For more information on these instances and the data behind the platforms, please refer to our publication.
 
 ### Compute Config
 
