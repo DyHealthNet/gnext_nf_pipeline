@@ -21,7 +21,7 @@ process_file() {
   local file="$1"
   gzip -cd "$file" \
     | tail -n +2 \
-    | awk -F'\t' 'BEGIN{OFS="\t"} {print $1, $2, ".", $3, $4, ".", ".", "."}' \
+    | awk -F'\t' 'BEGIN{OFS="\t"} {print $1, $2, ".", $4, $5, ".", ".", "."}' \
     && echo "Done: $(basename "$file")" >&2
 }
 export -f process_file

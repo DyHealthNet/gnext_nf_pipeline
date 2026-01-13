@@ -11,7 +11,6 @@ process run_magma_gene_test {
     
     output:
         path "*.genes.out", emit: magma_results
-        path "*.log", emit: magma_logs
 
     script:
     // Construct a manifest with phenocode, file, and sample size

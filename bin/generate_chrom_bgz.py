@@ -44,6 +44,8 @@ def build_chr_variant_index(chrom: str, vcf: str):
             vid = f"{c}:{p}:{r}:{a}".encode()
             rows.append((c, p, r, a, vid))
     row_index = {vid: i for i, (_, _, _, _, vid) in enumerate(rows)}
+    
+    print(f"✓ Loaded {len(rows)} variants from VCF for chr {chrom}", file=sys.stderr)
     return rows, row_index
 
 # ------------------------------------------------------------------------------
@@ -81,6 +83,7 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
                         shm_names, shape, dtype, cols):
     import numpy as _np
     import pysam as _pysam
+    import sys as _sys
     col_p, col_b, col_se, col_af = cols
 
     p_shm = shared_memory.SharedMemory(name=shm_names['p'])
@@ -97,6 +100,8 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
         fn = trait_paths[j]
         if not (os.path.exists(fn) and os.path.exists(fn + ".tbi")):
             continue
+        
+        matched = 0
         try:
             with _pysam.TabixFile(fn) as tbx:
                 try:
@@ -111,6 +116,8 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
                     gi = row_index.get(vid)
                     if gi is None or gi < i0 or gi >= i1:
                         continue
+                    
+                    matched += 1
                     li = gi - i0
                     try: p_arr[li, j] = float(f[col_p])
                     except Exception: p_arr[li, j] = _np.nan
@@ -120,6 +127,8 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
                     except Exception: se_arr[li, j] = _np.nan
                     try: af_arr[li, j] = float(f[col_af])
                     except Exception: af_arr[li, j] = _np.nan
+            
+            print(f"  ✓ Trait {os.path.basename(fn)}: {matched} variants matched", file=_sys.stderr)
         except Exception:
             continue
 
@@ -211,6 +220,9 @@ def build_chromosome(chrom: str, vcf: str, norm_files, row_block_size: int, trai
             p_block, b_block, se_block, af_block,
             max_workers=max(1, trait_workers)
         )
+        
+        non_nan = np.sum(~np.isnan(p_block))
+        print(f"✓ Block {b+1}/{nblocks} filled: {non_nan}/{p_block.size} values", file=sys.stderr)
 
         for li in range(block_rows):
             c, p, r, a, vid = rows[i0 + li]
@@ -221,6 +233,7 @@ def build_chromosome(chrom: str, vcf: str, norm_files, row_block_size: int, trai
             writers["alt_allele_freq"].write(("\t".join(head + [("." if not np.isfinite(x) else f"{x:.6g}") for x in af_block[li, :]]) + "\n").encode())
 
     close_and_index(paths, writers)
+    print(f"✓ Chr {chrom} complete: {nvar} variants, {ntraits} traits written", file=sys.stderr)
 
 # ------------------------------------------------------------------------------
 # CLI
