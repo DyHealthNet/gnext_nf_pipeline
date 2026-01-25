@@ -1,6 +1,4 @@
 process generate_batch_reference_vcf {
-    cache 'lenient'
-
     cpus params.vcf_cpus ?: 16
     memory params.vcf_memory ?: '64 GB'
 

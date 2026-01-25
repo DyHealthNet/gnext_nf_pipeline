@@ -3,6 +3,7 @@ process generate_magma_data_input {
 
   cpus params.magma_input_cpus ?: 32
   memory params.magma_input_memory ?: '64 GB'
+  maxForks = 8 
 
   tag { "${gz_files.size()}" }
 

@@ -2,10 +2,10 @@ process generate_manhattan_qq {
   cache 'lenient'
   publishDir "${params.out_dir}/manhattan_qq", mode: 'symlink'
   tag { "${gz_files.size()}" }
-
   
   cpus params.manhattan_qq_cpus ?: 8
   memory params.manhattan_qq_memory ?: '64GB'
+  maxForks = 8
 
 
   input:

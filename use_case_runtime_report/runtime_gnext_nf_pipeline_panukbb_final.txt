@@ -1,0 +1,273 @@
+MAGMA_ANALYSIS:generate_magma_annotation	0	1m 43s	1m 1s
+NORMALIZE_GWAS:normalize	0	7h 34m 28s	3h 42m 33s
+NORMALIZE_GWAS:normalize	0	8h 37m	4h 18m 46s
+NORMALIZE_GWAS:normalize	0	7h 50m 33s	3h 58m 3s
+NORMALIZE_GWAS:normalize	0	11h 41m 16s	3h 50m 23s
+NORMALIZE_GWAS:normalize	0	11h 20m 6s	3h 45m 21s
+NORMALIZE_GWAS:normalize	0	3h 52m 39s	3h 51m 43s
+NORMALIZE_GWAS:normalize	0	4h 18m 24s	4h 17m 58s
+NORMALIZE_GWAS:normalize	0	3h 52m 34s	3h 51m 55s
+NORMALIZE_GWAS:normalize	0	12h 54m 13s	4h 16m 16s
+NORMALIZE_GWAS:normalize	0	15h 40m 23s	3h 59m 25s
+NORMALIZE_GWAS:normalize	0	15h 2m 58s	3h 42m 16s
+NORMALIZE_GWAS:normalize	0	19h 25m 23s	4h 43m
+NORMALIZE_GWAS:normalize	0	19h 43m 2s	4h 2m 20s
+NORMALIZE_GWAS:normalize	0	22h 32m 3s	4h 49m 44s
+NORMALIZE_GWAS:normalize	0	19h 56m 43s	5h 14m 13s
+NORMALIZE_GWAS:normalize	0	20h 18m 45s	5h 35m 42s
+NORMALIZE_GWAS:normalize	0	17h 42m 6s	4h 48m 51s
+NORMALIZE_GWAS:normalize	0	19h 4m 40s	4h 19m 16s
+NORMALIZE_GWAS:normalize	0	18h 52m 46s	4h 10m 5s
+NORMALIZE_GWAS:normalize	0	19h 3m 46s	4h 1m 22s
+NORMALIZE_GWAS:normalize	0	19h 35m 5s	5h 25s
+NORMALIZE_GWAS:normalize	0	20h 59m 43s	5h 23m 36s
+NORMALIZE_GWAS:normalize	0	15h 49m 16s	3h 57m 9s
+NORMALIZE_GWAS:normalize	0	14h 49s	5h 2m 29s
+NORMALIZE_GWAS:normalize	0	16h 34m 46s	4h 43m 54s
+NORMALIZE_GWAS:normalize	0	16h 5m 33s	4h 45m 39s
+NORMALIZE_GWAS:normalize	0	13h 46m 59s	4h 28m 20s
+NORMALIZE_GWAS:normalize	0	18h 46m 25s	3h 46m 7s
+NORMALIZE_GWAS:normalize	0	8h 42m 11s	3h 55m 5s
+NORMALIZE_GWAS:normalize	0	11h 26m 2s	3h 50m 3s
+NORMALIZE_GWAS:normalize	0	13h 55m 2s	4h 17m 10s
+NORMALIZE_GWAS:normalize	0	11h 38m 57s	3h 55m 42s
+NORMALIZE_GWAS:normalize	0	10h 38m 13s	4h 53m 5s
+NORMALIZE_GWAS:normalize	0	9h 50m 43s	4h 44m 44s
+NORMALIZE_GWAS:normalize	0	10h 26m 52s	5h 9m 51s
+NORMALIZE_GWAS:normalize	0	10h 19m 39s	4h 47m 34s
+NORMALIZE_GWAS:normalize	0	11h 1m 31s	5h 23m 52s
+NORMALIZE_GWAS:normalize	0	8h 43m 13s	3h 55m 51s
+NORMALIZE_GWAS:normalize	0	9h 56m 4s	4h 29m 14s
+NORMALIZE_GWAS:normalize	0	9h 56m 52s	3h 46m 52s
+NORMALIZE_GWAS:normalize	0	10h 37m 35s	4h 47m 29s
+NORMALIZE_GWAS:normalize	0	9h 48m 25s	3h 41m 36s
+NORMALIZE_GWAS:normalize	0	8h 55m 5s	3h 58m 57s
+NORMALIZE_GWAS:normalize	0	11h 2m 39s	4h 49m 50s
+NORMALIZE_GWAS:normalize	0	9h 45m 14s	4h 47m 48s
+NORMALIZE_GWAS:normalize	0	10h 10m 25s	4h 37m 5s
+NORMALIZE_GWAS:normalize	0	10h 18m 59s	4h 54m 43s
+NORMALIZE_GWAS:normalize	0	8h 30m 33s	2h 43m 28s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 42m 12s	2h 41m 41s
+MAGMA_ANALYSIS:generate_magma_data_input	0	3h 44m 48s	3h 44m 10s
+MAGMA_ANALYSIS:generate_magma_data_input	0	3h 36m 8s	3h 35m 41s
+MAGMA_ANALYSIS:generate_magma_data_input	0	3h 30m 58s	3h 30m 33s
+MAGMA_ANALYSIS:generate_magma_data_input	0	3h 29m 2s	3h 28m 34s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 41m 47s	2h 41m 5s
+MAGMA_ANALYSIS:generate_magma_data_input	0	3h 29m 18s	3h 28m 54s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 57m 59s	6h 57m 18s
+MAGMA_ANALYSIS:generate_magma_data_input	0	3h 39m 8s	3h 39m 3s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 49m 44s	5h 49m 18s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 45m 18s	5h 44m 59s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 44m 45s	6h 44m 15s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 53m 9s	6h 52m 49s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 40m 29s	5h 40m 22s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 58m 28s	5h 57m 56s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 45m 29s	6h 44m 44s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 8m 30s	2h 8m 18s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 57m 59s	7h 57m 43s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 16m 44s	7h 16m 1s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 57m 31s	1h 57m 2s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 58m 31s	1h 58m 1s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 59m 56s	1h 59m 29s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 10m 2s	3h 9m 49s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 56m 51s	1h 56m 46s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 10m 2s	3h 9m 11s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 12m 17s	3h 12m 2s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 2m 57s	3h 2m 26s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 2m 6s	2h 1m 53s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 1m 1s	2h 51s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 57m 32s	1h 56m 54s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 2m 6s	2h 1m 48s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 4m 59s	7h 4m 27s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 9m 27s	3h 8m 59s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 16m 2s	3h 15m 38s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 56m 26s	1h 56m 7s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 59m 1s	1h 58m 51s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 12m 2s	3h 11m 33s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 2m 57s	3h 2m 18s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 24m 37s	3h 24m 26s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 17s	2h 59m 48s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 6m 31s	2h 5m 31s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 59m 12s	2h 58m 48s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 57m 56s	1h 57m 50s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 55m 12s	2h 54m 57s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 57m 16s	2h 57m 2s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 4m 50s	2h 4m 46s
+MAGMA_ANALYSIS:run_magma_gene_test	0	9h 52m 24s	9h 52m 12s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 1m 56s	3h 1m 21s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 57m 57s	2h 57m 34s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 16m 31s	3h 16m 14s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 54m 7s	2h 54m
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 37m 10s	1h 37m
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 53m 41s	2h 53m 8s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	2h 56m 16s	2h 56m 9s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	3h 17m 32s	3h 16m 53s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 24m 25s	6h 19m 2s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 37m 45s	1h 37m 22s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 38m 10s	1h 37m 57s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 46m 30s	1h 46m 22s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 49m 20s	1h 48m 33s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 37m 30s	1h 37m 13s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 18m 59s	7h 18m 37s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 35m 40s	1h 35m 20s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 39m 45s	1h 39m 18s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 45m 15s	1h 44m 52s
+GENERATE_JSONS:generate_manhattan_qq	0	9h 6m 26s	7h 2m 49s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 38m 10s	1h 37m 57s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 39m 5s	1h 38m 36s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 39m 1s	1h 38m 20s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 41m 15s	1h 40m 44s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 12m 25s	1h 12m 21s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 31m 50s	1h 31m 28s
+MAGMA_ANALYSIS:run_magma_gene_test	0	10h 30m 49s	10h 30m 40s
+ANNOTATE_VARIANTS:generate_batch_reference_vcf	0	1h 45m 25s	1h 44m 45s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 14m 25s	6h 9m 32s
+ANNOTATE_VARIANTS:merge_batch_reference_vcfs	0	29m 14s	28m 39s
+MAGMA_ANALYSIS:run_magma_gene_test	0	1d 4h 53m 36s	1d 4h 53m 21s
+ANNOTATE_VARIANTS:extract_chroms	0	38.9s	10.8s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 33m 33s	7h 27m 43s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 11m 59s	7h 11m 43s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 42m 30s	6h 33m 32s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 53m 54s	6h 53m 41s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 7m 21s	2h 6m 39s
+GENERATE_JSONS:generate_manhattan_qq	0	12h 29m 48s	7h 27m 16s
+ANNOTATE_VARIANTS:VCF_ANNOTATE_ENSEMBLVEP:ENSEMBLVEP_VEP	0	8h 48m 9s	8h 47m 49s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 16m 36s	2h 15m 47s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 51m 42s	7h 50m 46s
+GENERATE_JSONS:generate_manhattan_qq	0	10h 32m 27s	5h 28m 20s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 11m 26s	2h 10m 44s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 8m 51s	2h 8m 30s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 13m 6s	2h 12m 50s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 8m 51s	2h 7m 59s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 8m 26s	2h 8m 4s
+GENERATE_JSONS:generate_manhattan_qq	0	9h 18m 40s	8h 22m 56s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 14m 51s	2h 14m 18s
+GENERATE_JSONS:generate_manhattan_qq	0	8h 38m 19s	7h 59m 27s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 42m 38s	6h 41m 58s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 57m 23s	7h 29m 7s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 34m 54s	7h 34m 12s
+ANNOTATE_VARIANTS:VCF_ANNOTATE_ENSEMBLVEP:TABIX_TABIX	0	3h 5m 52s	4m 2s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 32m 18s	5h 31m 51s
+GENERATE_JSONS:generate_manhattan_qq	0	8h 52m 55s	8h 39m 2s
+ANNOTATE_VARIANTS:generate_variant_id_lmdb	0	8m 9s	7m 17s
+ANNOTATE_VARIANTS:publish_vep_results	0	3m 19s	2m 12s
+ANNOTATE_VARIANTS:generate_variant_gene_lmdb	0	13m 28s	12m 2s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 55m 23s	6h 54m 33s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 30m 59s	7h 29m 53s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 44m 38s	6h 43m 59s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 25m 16s	7h 24m 43s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 16m 2s	6h 15m 3s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 57m 10s	6h 56m 2s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 50m 48s	7h 50m
+GENERATE_JSONS:generate_manhattan_qq	0	5h 5m 51s	5h 5m 30s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 11m 25s	7h 10m 45s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 26m 49s	6h 26m 3s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	2d 22h 29m 52s	2d 22h 29m 44s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	2d 9h 55m 7s	2d 9h 54m 9s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	2d 17h 23m 25s	2d 17h 22m 45s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	4d 5h 43m 12s	4d 5h 43m
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 20h 15m 33s	1d 20h 15m 18s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 11h 14m 14s	1d 11h 13m 33s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 21h 32m 34s	1d 21h 32m 11s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 12h 50m 53s	1d 12h 50m 34s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 14h 40m 39s	1d 14h 40m 21s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 8h 47m 25s	1d 8h 46m 23s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 41m 53s	1d 41m 21s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	4d 6h 28m 6s	4d 6h 27m 30s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	4d 13h 53m 56s	4d 13h 53m 8s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	4d 6h 46m 26s	4d 6h 46m 18s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	13h 11m 7s	13h 10m 47s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 2h 43m 39s	1d 2h 42m 55s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	13h 11m 7s	13h 10m 51s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 34m 37s	6h 33m 56s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	3d 19h 59m 14s	3d 13h 13m 41s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	3d 1h 50m 2s	2d 13h 52m 47s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	3d 21h 4m 20s	3d 15h 23m 23s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	4d 5s	3d 12h 3m 10s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	4d 1h 43m 41s	3d 13h 46m 54s
+GENERATE_BGZ_FILES:generate_chrom_bgz	0	1d 19h 55m 25s	1d 19h 5m 20s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 30m 17s	6h 29m 44s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 13m 21s	5h 13m 1s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 31m 49s	5h 31m 26s
+GENERATE_JSONS:generate_manhattan_qq	0	6h 10m 46s	6h 10m 2s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 40m 26s	7h 39m 54s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 30m 37s	7h 29m 44s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 17m 16s	7h 16m 50s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 17m 43s	7h 16m 58s
+GENERATE_JSONS:generate_manhattan_qq	0	7h 22m 38s	7h 21m 43s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 3m 10s	5h 2m 46s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 43m 52s	5h 43m 36s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 36m 34s	5h 36m 21s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 33m 22s	5h 33m 10s
+GENERATE_JSONS:generate_manhattan_qq	0	5h 28m 58s	5h 28m 42s
+GENERATE_JSONS:generate_manhattan_qq	0	4h 4m 50s	4h 4m 14s
+GENERATE_JSONS:generate_top_hits	0	49m 4s	48m 25s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 21m 57s	2h 20m 55s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 36m 47s	6h 36m 2s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 17m 52s	2h 17m 29s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 35m 46s	6h 35m 25s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 14m 36s	2h 14m 12s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 39m 17s	6h 38m 14s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 9m 28s	2h 8m 52s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 41m 57s	6h 40m 48s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 9m 53s	2h 9m
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 28m 42s	6h 28m 3s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 12m 57s	2h 12m 48s
+MAGMA_ANALYSIS:run_magma_gene_test	0	8h 19m 17s	8h 18m 28s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 17m 56s	2h 17m 25s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 45m 7s	6h 44m 29s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 10m 42s	2h 10m 31s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 46m 37s	6h 46m 9s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 5m 24s	2h 5m 11s
+MAGMA_ANALYSIS:run_magma_gene_test	0	17h 8m	17h 7m 25s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 10m 14s	2h 9m 26s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 54m 5s	6h 53m 33s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 11m 10s	2h 10m 56s
+MAGMA_ANALYSIS:generate_magma_data_input	0	1h 51m 20s	1h 50m 56s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 3m 20s	2h 2m 38s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 5m 24s	2h 4m 45s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 5m 29s	2h 5m 14s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 11m 55s	2h 11m 42s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 7m 41s	2h 7m 28s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 16m 40s	2h 16m 33s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 17m 15s	2h 16m 44s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 18m 36s	2h 17m 47s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 8m 26s	2h 8m 11s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 12m 30s	2h 11m 42s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 4m 21s	2h 3m 44s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 25m 45s	6h 25m 13s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 13m 30s	2h 12m 45s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 40m 45s	6h 40m 31s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 28m 10s	6h 27m 32s
+MAGMA_ANALYSIS:run_magma_gene_test	0	1d 11h 32m 4s	1d 11h 31m 58s
+MAGMA_ANALYSIS:run_magma_gene_test	0	5h 57m 41s	5h 56m 52s
+MAGMA_ANALYSIS:run_magma_gene_test	0	11h 33m 16s	11h 32m 52s
+MAGMA_ANALYSIS:run_magma_gene_test	0	1d 13h 23m 39s	1d 13h 23m 16s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 10m 19s	2h 10m 7s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 12m 49s	2h 12m 41s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 49m 55s	6h 49m 19s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 13m 50s	2h 13m 34s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 12m 19s	2h 11m 48s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 50m 50s	6h 50m 12s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 52m 21s	7h 52m 5s
+MAGMA_ANALYSIS:generate_magma_data_input	0	2h 14m 35s	2h 13m 50s
+MAGMA_ANALYSIS:generate_magma_data_input	0	1h 27m	1h 26m 44s
+MAGMA_ANALYSIS:run_magma_gene_test	0	2d 18h 37m 13s	2d 18h 36m 49s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 25m 6s	6h 24m 53s
+MAGMA_ANALYSIS:run_magma_gene_test	0	8h 20m 46s	8h 19m 56s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 2m 20s	7h 2m 10s
+MAGMA_ANALYSIS:run_magma_gene_test	0	10h 54m 31s	10h 54m 19s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 43m 21s	6h 42m 58s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 19m 10s	6h 18m 36s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 58m 11s	6h 57m 33s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 43m 21s	6h 43m 9s
+MAGMA_ANALYSIS:run_magma_gene_test	0	10h 12m 6s	10h 11m 39s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 22m 36s	6h 22m 19s
+MAGMA_ANALYSIS:run_magma_gene_test	0	7h 5m 31s	7h 5m 22s
+MAGMA_ANALYSIS:run_magma_gene_test	0	9h 1m 28s	9h 29s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 28m 41s	6h 28m 32s
+MAGMA_ANALYSIS:run_magma_gene_test	0	8h 17m 6s	8h 16m 11s
+MAGMA_ANALYSIS:run_magma_gene_test	0	6h 36m 26s	6h 36m 7s
+MAGMA_ANALYSIS:run_magma_gene_test	0	9h 47m 12s	9h 46m 56s
+MAGMA_ANALYSIS:run_magma_gene_test	0	4h 32m 55s	4h 32m 32s
+MAGMA_ANALYSIS:generate_gene_magma_bgz	0	1h 52m 50s	1h 52m 1s

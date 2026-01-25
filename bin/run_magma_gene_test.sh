@@ -23,41 +23,28 @@ echo "Max workers: $MAX_WORKERS"
 echo "Sample size parameter: $N_PARAM"
 echo "Output prefix: $OUT_PREFIX"
 
-
-
-# run magma
-# N_PARAM can be either "N=12345" or "ncol=12"
-#./magma \
-#    --bfile "$REF_FILE" synonyms=0 \
-#    --gene-annot "$ANNO_LOC" \
-#    --gene-model snp-wise=mean \
-#    --pval "$SNP_PVAL_FILE" $N_PARAM \
-#    --out "${OUT_PREFIX}" \
-#    --genes-only
-
-#echo "MAGMA gene analysis completed."
-
-
 # run magma in parallel
+
+export REF_FILE ANNO_LOC SNP_PVAL_FILE N_PARAM OUT_PREFIX MAX_WORKERS
 
 seq 1 "$MAX_WORKERS" | parallel -j "$MAX_WORKERS" \
   magma \
-    --batch {} "$MAX_WORKERS" \
-    --bfile "$REF_FILE" synonyms=0 \
-    --gene-annot "$ANNO_LOC" \
+    --batch {} '"$MAX_WORKERS"' \
+    --bfile '"$REF_FILE"' synonyms=0 \
+    --gene-annot '"$ANNO_LOC"' \
     --gene-model snp-wise=mean \
-    --pval "$SNP_PVAL_FILE" $N_PARAM \
-    --out "temp_annot/${OUT_PREFIX}" \
+    --pval '"$SNP_PVAL_FILE"' '"$N_PARAM"' \
+    --out '"temp_annot/${OUT_PREFIX}"' \
     --genes-only
 
 # merge intermediate results generated under the temp_annot files and merge to one single file set
 
 magma \
-  --merge temp_annot/$OUT_PREFIX \
-  --out temp_annot/$OUT_PREFIX
+  --merge "temp_annot/${OUT_PREFIX}" \
+  --out "temp_annot/${OUT_PREFIX}"
 
 # extract merged files for subsequent analysis
-cp temp_annot/$OUT_PREFIX.genes.* .
+cp "temp_annot/${OUT_PREFIX}".genes.* .
 
 # remove the temporary folder
 rm -r temp_annot

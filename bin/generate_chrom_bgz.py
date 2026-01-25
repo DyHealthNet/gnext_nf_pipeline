@@ -95,7 +95,7 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
     b_arr = _np.ndarray(shape, dtype=dtype, buffer=b_shm.buf)
     se_arr = _np.ndarray(shape, dtype=dtype, buffer=se_shm.buf)
     af_arr = _np.ndarray(shape, dtype=dtype, buffer=af_shm.buf)
-
+    
     for j in trait_idxs:
         fn = trait_paths[j]
         if not (os.path.exists(fn) and os.path.exists(fn + ".tbi")):
@@ -113,6 +113,7 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
                     if len(f) <= max(col_p, col_b, col_se, col_af, 4):
                         continue
                     vid = f"{f[0]}:{f[1]}:{f[3]}:{f[4]}".encode()
+                    
                     gi = row_index.get(vid)
                     if gi is None or gi < i0 or gi >= i1:
                         continue
