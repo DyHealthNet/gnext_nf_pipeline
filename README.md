@@ -168,3 +168,9 @@ Only change the pheno_file, append columns at the end (not in between rows), and
 nextflow run main.nf -profile slurm,docker -resume
 ```
 
+# Citation
+
+Bridging the gap between genome-wide association studies and network medicine with GNExT
+Lis Arend, Fabian Woller, Bastienne Rehor, David Emmert, Johannes Frasnelli, Christian Fuchsberger, David B. Blumenthal, Markus List
+bioRxiv 2026.01.30.702559; doi: https://doi.org/10.64898/2026.01.30.702559
+
