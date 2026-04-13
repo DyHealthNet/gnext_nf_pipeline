@@ -139,6 +139,26 @@ To resume the workflow:
 nextflow run main.nf -profile slurm,docker -resume
 ```
 
+**Note**: Run the pipeline in a tmux session to ensure a persistent interactive terminal environment. The Nextflow workflow depends on an active terminal session, and using tmux prevents unintended termination due to session disconnects (e.g., SSH timouts). This allows the pipeline to continue running in the background and enables you to reattach to the session at any time.
+
+For creating a tmux session:
+
+```bash
+tmux new -s mysession
+```
+Within the tmux session, execute the pipeline as you would in a standard Bash terminal environment.
+For exiting without stopping it, press: Ctrl + b, then d
+
+For re-entering the session:
+
+```bash
+tmux a -t mysession
+```
+
+To list you existing sessions:
+```bash
+tmux ls
+```
 
 # Replace Symlinks by Copying Files
 
