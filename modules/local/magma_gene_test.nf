@@ -7,8 +7,7 @@ process run_magma_gene_test {
     memory params.magma_memory ?: '32 GB'
 
     input:
-    tuple val(magma_input_files), path(annotation_file), path(magma_reference_plink_bim), path(magma_reference_plink_bed), path(magma_reference_plink_fam), path(magma_gene_location)
-    
+        tuple val(magma_input_files), path(annotation_file), val(magma_reference_plink_prefix), path(magma_gene_location)
     output:
         path "*.genes.out", emit: magma_results
 
@@ -19,8 +18,6 @@ process run_magma_gene_test {
     // Determine if sample sizes come from pheno file (gwas_rows) or from GWAS file column
     def use_n_column = params.n_samples_column ? "true" : "false"
 
-    // Reference file
-    def magma_reference_plink_prefix = magma_reference_plink_bim.toString().replaceFirst(/\.bim$/, '')
     """
     set -e
 

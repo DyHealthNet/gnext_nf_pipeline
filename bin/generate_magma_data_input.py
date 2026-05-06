@@ -3,6 +3,8 @@ import argparse
 import sys
 import time
 import pandas as pd
+import re
+from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from zorp import sniffers, parsers
 
@@ -59,18 +61,86 @@ def create_parser_with_sample_size():
     return wrapper
 
 def normalize_chr(chr_str: str) -> str:
-    """Normalize chromosome names to match .bim convention (1–25)."""
+    """Normalize chromosome names to match .bim convention (1-25)."""
     chr_str = str(chr_str).replace("chr", "")
     mapping = {"X": "23", "Y": "24", "M": "25", "MT": "25"}
     return mapping.get(chr_str, chr_str)
 
-def load_bim_ids(bim_path: str, genome_build: str) -> set:
-    """Read .bim file and return unique IDs (chr:pos:allele1:allele2)."""
-    df = pd.read_csv(bim_path, sep=r"\s+", header=None, names=["Chromosome", "ID", "CM", "Position", "Allele1", "Allele2"])   
-    print(f"[INFO] Loaded {len(df):,} variants from BIM file.")
-    # Apply normalization to chromosome column
-    df["Chromosome"] = df["Chromosome"].apply(normalize_chr)
-    return set(df["ID"]), set(df["Chromosome"])
+def natural_key(path: Path):
+    """Create a natural sorting key for filenames."""
+    return [
+        int(text) if text.isdigit() else text
+        for text in re.split(r"(\d+)", path.name)
+    ]
+
+
+def resolve_bim_files_from_prefix(bim_prefix: str) -> list[Path]:
+    """
+    Resolve BIM files from a prefix.
+
+    Supports:
+      - single file: prefix.bim
+      - multiple files: prefix{1..25}.bim, prefixX.bim, prefixY.bim, prefixM.bim, prefixMT.bim
+    """
+    prefix = Path(bim_prefix)
+
+    single_bim = Path(f"{bim_prefix}.bim")
+    if single_bim.is_file():
+        return [single_bim]
+
+    bim_files = []
+    pattern = re.compile(r"^([1-9]|1[0-9]|2[0-5]|X|Y|M|MT)$")
+
+    for bim_file in prefix.parent.glob(f"{prefix.name}*.bim"):
+        base = bim_file.stem
+        suffix = base[len(prefix.name):]
+
+        if pattern.fullmatch(suffix):
+            bim_files.append(bim_file)
+
+    bim_files = sorted(bim_files, key=natural_key)
+
+    if not bim_files:
+        raise FileNotFoundError(
+            f"Could not detect BIM input from prefix: {bim_prefix}\n"
+            f"Expected either:\n"
+            f"  {bim_prefix}.bim\n"
+            f"or one or more files matching:\n"
+            f"  {bim_prefix}{{1..25}}.bim\n"
+            f"  {bim_prefix}X.bim\n"
+            f"  {bim_prefix}Y.bim\n"
+            f"  {bim_prefix}M.bim\n"
+            f"  {bim_prefix}MT.bim"
+        )
+
+    return bim_files
+
+
+def load_bim_ids(bim_prefix: str, genome_build: str) -> tuple[set, set]:
+    """Read BIM file(s) resolved from a prefix and return variant IDs and chromosomes."""
+    bim_files = resolve_bim_files_from_prefix(bim_prefix)
+
+    variant_ids = set()
+    chromosomes = set()
+    total_variants = 0
+
+    for bim_file in bim_files:
+        df = pd.read_csv(
+            bim_file,
+            sep=r"\s+",
+            header=None,
+            usecols=[0, 1],
+            names=["Chromosome", "ID"]
+        )
+
+        total_variants += len(df)
+        print(f"[INFO] Loaded {len(df):,} variants from BIM file: {bim_file}")
+
+        chromosomes.update(df["Chromosome"].map(normalize_chr).dropna())
+        variant_ids.update(df["ID"].dropna().astype(str))
+    print(f"[INFO] Loaded {total_variants:,} total variants from {len(bim_files)} BIM file(s).")
+
+    return variant_ids, chromosomes
 
 def meta_id_generation(variant):
     """Construct ID like <chr>:<pos>:<allele1>:<allele2> with alphabetically sorted alleles."""
@@ -94,9 +164,21 @@ def generate_MAGMA_gwas_input_file(gwas_path: str, phenocode: str, bim_ids: set,
     total, retained, chrom_mismatch = 0, 0, 0
     start = time.time()
     output_file = f"{phenocode}_magma.tsv"
-    
+
     print(f"[INFO] Reading GWAS: {gwas_path}")
     print(f"[INFO] Writing to: {output_file}")
+    
+    # Detect if CHR column starts with "chr" or "CHR" in BIM IDs
+    bim_snp_id_prefix = ""
+
+    if bim_ids:
+        first_id = next(iter(bim_ids))
+        first_id = str(first_id)
+
+        if first_id.startswith("CHR"):
+            bim_snp_id_prefix = "CHR"
+        elif first_id.startswith("chr"):
+            bim_snp_id_prefix = "chr" 
 
     # Open output file and write directly
     with open(output_file, 'w') as out_f:
@@ -109,6 +191,13 @@ def generate_MAGMA_gwas_input_file(gwas_path: str, phenocode: str, bim_ids: set,
                 chrom_mismatch += 1
 
             gwas_id = f"{chrom}:{variant.pos}:{variant.ref}:{variant.alt}"
+
+            # Add prefix if needed
+            if bim_snp_id_prefix == "CHR":
+                gwas_id = f"CHR{gwas_id}"
+            elif bim_snp_id_prefix == "chr":
+                gwas_id = f"chr{gwas_id}"
+            
             total += 1
             
             if gwas_id in bim_ids:

@@ -5,7 +5,7 @@ process generate_magma_annotation {
     memory '64 GB'
 
     input:
-    path magma_reference_plink_bim
+    val magma_reference_plink_prefix   
     path magma_gene_location
 
     output:
@@ -15,7 +15,7 @@ process generate_magma_annotation {
     """
 
     bash run_magma_annotation.sh \
-        ${magma_reference_plink_bim} \
+        ${magma_reference_plink_prefix} \
         ${magma_gene_location} \
         ${params.window_up} \
         ${params.window_down} \

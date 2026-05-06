@@ -13,9 +13,9 @@ workflow MAGMA_ANALYSIS {
 
     main:
     
-    bim_file = file("${params.magma_reference_plink}.bim")
+    bim_prefix = params.magma_reference_plink
     gene_location_file = file(params.gene_location)
-    magma_annotation = generate_magma_annotation(bim_file,gene_location_file)
+    magma_annotation = generate_magma_annotation(bim_prefix,gene_location_file)
 
     // Create channel of (phenocode, file) pairs
     norm_files_ch = norm_gz_files.map { file ->
@@ -33,7 +33,7 @@ workflow MAGMA_ANALYSIS {
     all_norm_files = norm_files_ordered.collate(params.pheno_batch_size)
 
     // Batch generate MAGMA input files
-    magma_input_results = generate_magma_data_input(all_norm_files, bim_file)
+    magma_input_results = generate_magma_data_input(all_norm_files, bim_prefix)
     
     // Map preprocessed MAGMA input files to phenocodes
     all_magma_inputs = magma_input_results.input_files.flatten().map { tsv_file ->
@@ -53,11 +53,9 @@ workflow MAGMA_ANALYSIS {
         .map { items ->
             def annotation_file = items[-1]
             def batch = items[0..-2]
-            def reference_plink_bim = file("${params.magma_reference_plink}.bim")
-            def reference_plink_bed = file("${params.magma_reference_plink}.bed")
-            def reference_plink_fam = file("${params.magma_reference_plink}.fam")
+            def reference_plink_prefix = params.magma_reference_plink
             def gene_location = file(params.gene_location)
-            tuple(batch, annotation_file, reference_plink_bim, reference_plink_bed, reference_plink_fam, gene_location)
+            tuple(batch, annotation_file, reference_plink_prefix, gene_location)
         }
 
     magma_final_results = run_magma_gene_test(magma_input_final)

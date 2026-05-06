@@ -8,8 +8,9 @@ process generate_magma_data_input {
   tag { "${gz_files.size()}" }
 
   input:
-    val(gz_files)
-    path magma_reference_plink_bim
+    val gz_files
+    val magma_reference_plink_prefix   
+
 
   output:
   path "*_magma.tsv", emit: input_files
@@ -40,7 +41,7 @@ END_MANIFEST
     --input-files manifest.tsv \
     --max-workers ${task.cpus} \
     --genome-build ${params.ensemblvep_genome} \
-    --ref-bim ${magma_reference_plink_bim} \
+    --ref-bim ${magma_reference_plink_prefix} \
     ${n_samples_flag}
   """
 }
