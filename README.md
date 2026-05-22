@@ -130,16 +130,28 @@ We support execution through Conda, Docker, or Singularity environments (e.g., -
 
 
 ```bash
-nextflow run main.nf -profile slurm,docker
+nextflow run main.nf -profile slurm,conda
 ```
 
 To resume the workflow:
 
 ```bash
-nextflow run main.nf -profile slurm,docker -resume
+nextflow run main.nf -profile slurm,conda -resume
 ```
 
-**Note**: Run the pipeline in a tmux session to ensure a persistent interactive terminal environment. The Nextflow workflow depends on an active terminal session, and using tmux prevents unintended termination due to session disconnects (e.g., SSH timouts). This allows the pipeline to continue running in the background and enables you to reattach to the session at any time.
+**Note**: If the automatic conda installation is failing, create a conda environment yourself and change the path of `process.conda` in `nextflow.config` to the conda environment:
+
+```bash
+conda env create -f envs/gnext_nf_pipeline.yml
+```
+
+To check the path of your conda environment:
+
+```bash
+conda env list
+```
+
+**Another Note**: Run the pipeline in a tmux session to ensure a persistent interactive terminal environment. The Nextflow workflow depends on an active terminal session, and using tmux prevents unintended termination due to session disconnects (e.g., SSH timouts). This allows the pipeline to continue running in the background and enables you to reattach to the session at any time.
 
 For creating a tmux session:
 
@@ -159,6 +171,8 @@ To list you existing sessions:
 ```bash
 tmux ls
 ```
+
+
 
 # Replace Symlinks by Copying Files
 
