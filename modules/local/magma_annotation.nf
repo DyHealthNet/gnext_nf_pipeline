@@ -1,3 +1,8 @@
+// Annotate SNPs to genes with MAGMA (step 1 of the gene-level analysis).
+// Runs run_magma_annotation.sh to map reference-panel SNPs to genes using the
+// configured up/downstream window, producing the shared .genes.annot file.
+// Inputs : reference PLINK .bim and the gene location file.
+// Outputs: the magma_annotation_window_*.genes.annot file.
 process generate_magma_annotation {
     publishDir "${params.out_dir}/magma_input", mode: 'symlink'
 

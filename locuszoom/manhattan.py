@@ -142,17 +142,22 @@ class Binner:
             self._maybe_bin_variant(variant_dict)
 
     def _maybe_peak_variant(self, variant: dict):
-
+        # Offer a variant to the bounded peak queue; the weakest overflow peak
+        # cascades down to the unbinned queue via the popped_callback.
         self._peak_pq.add_and_keep_size(variant, variant['neg_log_pvalue'],
                                         size=self._peak_max_count,
                                         popped_callback=self._maybe_bin_variant)
 
     def _maybe_bin_variant(self, variant):
+        # Offer a variant to the bounded unbinned queue; overflow cascades into the
+        # coarse positional bins via the popped_callback.
         self._unbinned_variant_pq.add_and_keep_size(variant, variant['neg_log_pvalue'],
                                                     size=self._num_unbinned,
                                                     popped_callback=self._bin_variant)
 
     def _bin_variant(self, variant):
+        # Aggregate a low-signal variant into a coarse (chrom, position-bin) bucket,
+        # storing only the set of rounded qvals rather than the variant itself.
         chrom_idx = variant['chrom']  # This part differs from PheWeb
         if chrom_idx not in self._bins:
             self._bins[chrom_idx] = {}
@@ -167,6 +172,11 @@ class Binner:
         self._bins[chrom_idx][pos_bin_id]["qvals"].add(qval)
 
     def get_result(self):
+        """Finalize binning and return {'variant_bins', 'unbinned_variants'}.
+
+        Flushes the open peak, merges peaks into the unbinned (clickable) variants,
+        and unrolls the positional bins into a flat list. Single-use per instance.
+        """
         self.get_result = None  # this can only be called once
 
         if self._peak_best_variant:

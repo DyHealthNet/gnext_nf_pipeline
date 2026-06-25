@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
+"""
+Post-process a MAGMA gene-test result by attaching gene symbols.
+
+Reads MAGMA's whitespace-delimited ".genes.out", left-joins the gene-location
+table on the ENSG GENE id to add a human-readable SYMBOL column, and rewrites the
+file in place as a tab-separated table for downstream consumption.
+"""
 import argparse
 import pandas as pd
 import sys
 from pathlib import Path
 
 def main():
+    """Parse CLI args, merge MAGMA output with gene symbols, and rewrite the file."""
     parser = argparse.ArgumentParser(
         description="Parse MAGMA gene output and optionally merge with gene location file."
     )

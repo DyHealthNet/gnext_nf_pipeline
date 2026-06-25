@@ -162,6 +162,7 @@ def write_bgz_file_with_index(gene_info, trait_names, pval_matrix, output_file, 
     print(f"Indexed {len(gene_info)} genes", file=sys.stderr)
 
 def main():
+    """Parse CLI args, load genes + MAGMA results, and write the indexed BGZ matrix."""
     parser = argparse.ArgumentParser(
         description="Generate BGZ file with MAGMA gene p-values across all traits"
     )

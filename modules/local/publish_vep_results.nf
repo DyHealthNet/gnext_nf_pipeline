@@ -1,3 +1,8 @@
+// Publish the VEP-annotated VCF (and its index) to the output directory.
+// A thin staging step that copies the annotated VCF into an out/ folder so it
+// lands under publishDir as the final annotation artifact.
+// Inputs : annotated vcf and its tbi.
+// Outputs: out/*.vcf.gz and out/*.tbi.
 process publish_vep_results {
     publishDir "${params.out_dir}/annotate", mode: 'symlink'
 

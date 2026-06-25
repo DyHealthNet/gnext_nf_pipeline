@@ -10,6 +10,13 @@ include { generate_variant_gene_lmdb } from '../../../modules/local/variant_gene
 include { generate_batch_reference_vcf} from '../../../modules/local/batch_reference_vcf.nf'
 include { merge_batch_reference_vcfs} from '../../../modules/local/merge_reference_vcfs.nf'
 
+// ANNOTATE_VARIANTS: build the reference VCF, annotate it with Ensembl VEP, and
+// derive the variant lookup databases.
+// Steps: batch the normalized files -> per-batch site VCFs -> merge into one
+// reference VCF -> (download VEP cache if needed) -> VEP annotate -> extract the
+// chromosome list -> build the variant->rsID and variant->gene LMDBs.
+//   take : norm_gz_files (normalized .gz files), gwas_rows (pheno manifest rows).
+//   emit : ref_vcf/ref_tbi, chroms, and the variant->gene LMDB + mapped genes.
 workflow ANNOTATE_VARIANTS {
     take:
     norm_gz_files
@@ -38,8 +45,9 @@ workflow ANNOTATE_VARIANTS {
         .filter { it != null }
         .collate(params.pheno_batch_size)
         .toList()
-        .flatMap { batches -> 
-            batches.withIndex().collect { batch, idx -> 
+        // Tag each batch with an index and keep only the file paths -> (idx, [files]).
+        .flatMap { batches ->
+            batches.withIndex().collect { batch, idx ->
                 tuple(idx, batch.collect { it[0] })
             }
         }

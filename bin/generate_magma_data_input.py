@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+Build the per-trait SNP p-value input files that MAGMA's gene test consumes.
+
+Each normalized GWAS file is filtered down to variants whose id
+"<chr>:<pos>:<ref>:<alt>" is present in the MAGMA reference panel's .bim, and
+written as "<phenocode>_magma.tsv" (SNP id, p-value, and optionally sample size).
+Variant ids are normalized to the .bim chromosome convention before matching.
+Files are processed in parallel and a per-trait mapping summary is written out.
+"""
 import argparse
 import sys
 import time
@@ -10,7 +19,7 @@ from zorp import sniffers, parsers
 # -------------------- Helpers --------------------
 
 class BasicVariantWithSampleSize(parsers.BasicVariant):
-    """Extended BasicVariant that includes sample size"""
+    """zorp BasicVariant extended with a per-variant sample size (n_samples)."""
     __slots__ = ('n_samples',)
     _fields = ('chrom', 'pos', 'rsid', 'ref', 'alt', 'neg_log_pvalue', 'beta', 'stderr_beta', 'alt_allele_freq', 'n_samples')
     
@@ -19,7 +28,13 @@ class BasicVariantWithSampleSize(parsers.BasicVariant):
         self.n_samples = n_samples
 
 def create_parser_with_sample_size():
-    """Create a parser that reads n_samples from normalized files (column 11)"""
+    """
+    Build a zorp line parser that also extracts n_samples from column 11.
+
+    The normalized-file column layout is fixed (chrom=1, pos=2, rsid=3, ...,
+    n_samples=11), so positions are hard-coded here. Returns a callable taking a
+    raw line and returning a BasicVariantWithSampleSize.
+    """
     MISSING_VALUES = {'', '.', 'NA', 'N/A', 'nan', 'NaN', 'NULL', 'null', 'None'}
     
     base_parser = parsers.GenericGwasLineParser(
@@ -80,8 +95,15 @@ def meta_id_generation(variant):
 # -------------------- Main --------------------
 
 def generate_MAGMA_gwas_input_file(gwas_path: str, phenocode: str, bim_ids: set, bim_chr: set, genome_build: str, include_n_samples: bool) -> dict:
-    """Filter GWAS variants by presence in reference BIM and outside the MHC region."""
-    
+    """
+    Write the MAGMA SNP input for one trait and return mapping statistics.
+
+    Streams variants from the GWAS file, keeps those whose normalized id is in the
+    reference .bim id set, and writes "<phenocode>_magma.tsv" with the SNP id,
+    p-value and (optionally) sample size. Returns a dict of counts (total/retained/
+    chromosome mismatches) for the run-level summary.
+    """
+
     # Choose reader based on whether we need to read n_samples
     if include_n_samples:
         # Use custom parser to read n_samples from normalized files (column 11)
@@ -137,6 +159,7 @@ def generate_MAGMA_gwas_input_file(gwas_path: str, phenocode: str, bim_ids: set,
 
 
 def main():
+    """Parse CLI args, build the .bim id set once, and process all traits in parallel."""
     parser = argparse.ArgumentParser(
         description="Annotate GWAS variants against a BIM reference using PyRanges."
     )

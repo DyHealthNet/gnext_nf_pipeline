@@ -1,3 +1,10 @@
+// Run the MAGMA gene-level test for every trait against the reference panel.
+// Builds a (phenocode, magma file, n_samples) manifest and loops over it: each
+// trait is run via run_magma_gene_test.sh (sample size taken from the file's
+// n_samples column when params.n_samples_column is set, else from the pheno file),
+// then annotated with gene symbols by parse_magma_gene_output.py.
+// Inputs : tuple of (per-trait magma inputs, .genes.annot, PLINK bim/bed/fam, gene loc).
+// Outputs: one *.genes.out per trait (emit: magma_results).
 process run_magma_gene_test {
     publishDir "${params.out_dir}/magma_results", mode: 'symlink'
 

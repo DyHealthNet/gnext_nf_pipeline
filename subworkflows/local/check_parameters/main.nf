@@ -1,5 +1,9 @@
 nextflow.enable.dsl=2
 
+// CHECK_PARAMETERS: in extend mode, guard against incompatible re-runs.
+// Compares the analysis-defining parameters against the snapshot saved by a prior
+// run (meta/workflow_params.json) and aborts if any changed, so an extended run
+// cannot silently mix incompatible settings. No-op unless params.extend is set.
 workflow CHECK_PARAMETERS {
     main:
      // Check input parameters

@@ -1,3 +1,8 @@
+// Build the per-chromosome, per-metric BGZ+Tabix matrices across all traits.
+// Runs generate_chrom_bgz.py for one chromosome, emitting four indexed files
+// (neg_log_pvalue, beta, stderr_beta, alt_allele_freq).
+// Inputs : (chrom, annotated vcf + tbi, file listing the normalized .gz inputs).
+// Outputs: one (chrom, .tsv.bgz, .tbi) tuple per metric.
 process generate_chrom_bgz {
     publishDir "${params.out_dir}/chr_bgz", mode: 'symlink'
 

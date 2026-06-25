@@ -1,3 +1,7 @@
+// List the distinct chromosomes present in the reference VCF.
+// Used to fan out per-chromosome processing (e.g. generate_chrom_bgz).
+// Inputs : the (gzipped) reference VCF.
+// Outputs: chroms.txt - one unique chromosome name per line.
 process extract_chroms {
     cpus 1
     memory '1 GB'

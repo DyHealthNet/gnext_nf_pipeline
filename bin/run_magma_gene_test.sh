@@ -1,6 +1,18 @@
 #!/bin/bash
+# Run MAGMA's gene-level association test (step 2, after annotation).
+# Splits the work into MAX_WORKERS batches run in parallel, then merges the partial
+# results into a single "<OUT_PREFIX>.genes.*" set in the task directory.
+#
+# Positional args:
+#   $1 REF_FILE       - PLINK reference panel prefix (.bed/.bim/.fam)
+#   $2 ANNO_LOC       - .genes.annot from run_magma_annotation.sh
+#   $3 SNP_PVAL_FILE  - per-SNP p-value input (from generate_magma_data_input.py)
+#   $4 MAX_WORKERS    - number of parallel MAGMA batches
+#   $5 N_PARAM        - MAGMA sample-size argument (e.g. "N=..." or "ncol=...")
+#   $6 OUT_PREFIX     - output file prefix
 set -euo pipefail
 
+# Scratch dir for the per-batch partial outputs (removed at the end).
 mkdir -p temp_annot
 
 REF_FILE=$1
@@ -23,8 +35,8 @@ echo "Max workers: $MAX_WORKERS"
 echo "Sample size parameter: $N_PARAM"
 echo "Output prefix: $OUT_PREFIX"
 
-# run magma in parallel
-
+# Run MAGMA in parallel: each worker processes batch {} of MAX_WORKERS via
+# MAGMA's built-in --batch splitting, writing partial results into temp_annot/.
 export REF_FILE ANNO_LOC SNP_PVAL_FILE N_PARAM OUT_PREFIX MAX_WORKERS
 
 seq 1 "$MAX_WORKERS" | parallel -j "$MAX_WORKERS" \

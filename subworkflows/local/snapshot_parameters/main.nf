@@ -1,5 +1,8 @@
 nextflow.enable.dsl=2
 
+// SNAPSHOT_PARAMETERS: record the run configuration under <out_dir>/meta.
+// Writes the resolved params as pretty JSON (workflow_params.json, later read by
+// CHECK_PARAMETERS) and copies the phenotype manifest alongside it.
 workflow SNAPSHOT_PARAMETERS {
     main:
     // Store workflow configurations to meta folder

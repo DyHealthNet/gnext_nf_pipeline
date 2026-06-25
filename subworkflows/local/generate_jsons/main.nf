@@ -3,6 +3,11 @@ nextflow.enable.dsl=2
 include {generate_manhattan_qq} from '../../../modules/local/manhattan_qq.nf'
 include {generate_top_hits} from '../../../modules/local/top_hits.nf'
 
+// GENERATE_JSONS: produce the plot/lookup JSONs consumed by the front-end.
+// Joins each pheno row to its normalized file, batches them, generates the
+// Manhattan/QQ JSONs, then aggregates the global top hits (annotated from the
+// variant->gene LMDB).
+//   take : norm_gz_files, gwas_rows, lmdb_gene_file.
 workflow GENERATE_JSONS {
     take:
     norm_gz_files

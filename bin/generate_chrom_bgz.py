@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+Build per-chromosome, per-metric BGZF+Tabix matrices spanning all traits.
+
+For one chromosome this assembles a "variants x traits" table for each of four
+metrics (neg_log_pvalue, beta, stderr_beta, alt_allele_freq), where rows come from
+the annotated reference VCF and columns are the normalized GWAS files. The matrix
+is built one row-block at a time; within a block, traits are filled in parallel by
+worker processes that share the block via shared memory to avoid copying. Each
+metric is written as a bgzipped, Tabix-indexed TSV for fast region queries by the
+front-end.
+"""
 import os
 import argparse
 import sys
@@ -11,6 +22,7 @@ from multiprocessing import shared_memory
 # ------------------------------------------------------------------------------
 # Globals
 # ------------------------------------------------------------------------------
+# 0-based column index of each metric within a normalized GWAS file.
 COLS = {
     "neg_log_pvalue": 5,
     "beta": 7,
@@ -34,6 +46,13 @@ def load_traits_and_paths(norm_files):
 # Variant index from annotated VCF
 # ------------------------------------------------------------------------------
 def build_chr_variant_index(chrom: str, vcf: str):
+    """
+    Read all variants on `chrom` from the annotated VCF.
+
+    Returns (rows, row_index) where `rows` is an ordered list of
+    (contig, pos, ref, alt, vid) tuples and `row_index` maps each variant id
+    "chrom:pos:ref:alt" to its row number. This ordering defines the matrix rows.
+    """
     rows = []
     with pysam.VariantFile(vcf) as vcf_in:
         for rec in vcf_in.fetch(str(chrom)):
@@ -41,10 +60,12 @@ def build_chr_variant_index(chrom: str, vcf: str):
             p = int(rec.pos)
             r = rec.ref
             a = rec.alts[0]
+            # Compact byte key used to align GWAS rows against the VCF ordering.
             vid = f"{c}:{p}:{r}:{a}".encode()
             rows.append((c, p, r, a, vid))
     row_index = {vid: i for i, (_, _, _, _, vid) in enumerate(rows)}
-    
+
+
     print(f"✓ Loaded {len(rows)} variants from VCF for chr {chrom}", file=sys.stderr)
     return rows, row_index
 
@@ -52,6 +73,12 @@ def build_chr_variant_index(chrom: str, vcf: str):
 # Writers
 # ------------------------------------------------------------------------------
 def open_writers(chrom, trait_names):
+    """
+    Open one BGZF writer per metric and write the shared header row.
+
+    Returns (paths, handles) dicts keyed by metric name. Each header carries the
+    fixed variant columns followed by one column per trait.
+    """
     header = "#" + "\t".join(["chrom", "pos", "ref", "alt", "vid"] + trait_names) + "\n"
     paths = {
         "neg_log_pvalue": f"chr_{chrom}_neg_log_pvalue.tsv.bgz",
@@ -65,6 +92,7 @@ def open_writers(chrom, trait_names):
     return paths, handles
 
 def close_and_index(paths, handles):
+    """Close each metric's BGZF writer and build its Tabix index (chrom/pos)."""
     for m, h in handles.items():
         h.close()
         pysam.tabix_index(
@@ -81,11 +109,20 @@ def close_and_index(paths, handles):
 # ------------------------------------------------------------------------------
 def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
                         shm_names, shape, dtype, cols):
+    """
+    Worker process: fill the columns for a subset of traits into shared memory.
+
+    For each assigned trait file, fetch this chromosome's rows, match them to the
+    global row index, and (for rows within the current block [i0, i1)) write each
+    metric value into the corresponding shared-memory matrix. Attaches to the
+    existing shared blocks by name rather than copying them.
+    """
     import numpy as _np
     import pysam as _pysam
     import sys as _sys
     col_p, col_b, col_se, col_af = cols
 
+    # Attach to the matrices created by the parent (one per metric).
     p_shm = shared_memory.SharedMemory(name=shm_names['p'])
     b_shm = shared_memory.SharedMemory(name=shm_names['b'])
     se_shm = shared_memory.SharedMemory(name=shm_names['se'])
@@ -113,13 +150,14 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
                     if len(f) <= max(col_p, col_b, col_se, col_af, 4):
                         continue
                     vid = f"{f[0]}:{f[1]}:{f[3]}:{f[4]}".encode()
-                    
+
+                    # Skip variants not in the VCF or outside this block's row range.
                     gi = row_index.get(vid)
                     if gi is None or gi < i0 or gi >= i1:
                         continue
-                    
+
                     matched += 1
-                    li = gi - i0
+                    li = gi - i0  # local (within-block) row index
                     try: p_arr[li, j] = float(f[col_p])
                     except Exception: p_arr[li, j] = _np.nan
                     try: b_arr[li, j] = float(f[col_b])
@@ -141,11 +179,20 @@ def _worker_fill_traits(chrom, trait_idxs, trait_paths, row_index, i0, i1,
 def fill_block_parallel(chrom, i0, i1, trait_paths, row_index,
                         p_block, b_block, se_block, af_block,
                         max_workers):
+    """
+    Fill one row-block's metric matrices, distributing traits across workers.
+
+    Copies the four NaN-initialized blocks into shared memory, splits the traits
+    into roughly equal shards (one per worker), runs the workers, then copies the
+    populated shared matrices back into the caller's blocks and unlinks the shared
+    segments.
+    """
     ntraits = p_block.shape[1]
     block_rows = i1 - i0
     dtype = np.float32
 
     def _mk_shm(arr):
+        """Create a shared-memory segment seeded with `arr`'s contents."""
         shm = shared_memory.SharedMemory(create=True, size=arr.nbytes)
         np.ndarray(arr.shape, dtype=arr.dtype, buffer=shm.buf)[:] = arr
         return shm
@@ -156,6 +203,7 @@ def fill_block_parallel(chrom, i0, i1, trait_paths, row_index,
     af_shm = _mk_shm(af_block)
     shm_names = {'p': p_shm.name, 'b': b_shm.name, 'se': se_shm.name, 'af': af_shm.name}
 
+    # Partition trait-column indices into contiguous shards, one per worker.
     shards = []
     if max_workers <= 1:
         shards = [list(range(ntraits))]
@@ -180,12 +228,14 @@ def fill_block_parallel(chrom, i0, i1, trait_paths, row_index,
         for f in as_completed(futs):
             f.result()
 
+    # Copy the worker-populated shared matrices back into the caller's blocks.
     p_arr = np.ndarray((block_rows, ntraits), dtype=dtype, buffer=p_shm.buf)
     b_arr = np.ndarray((block_rows, ntraits), dtype=dtype, buffer=b_shm.buf)
     se_arr = np.ndarray((block_rows, ntraits), dtype=dtype, buffer=se_shm.buf)
     af_arr = np.ndarray((block_rows, ntraits), dtype=dtype, buffer=af_shm.buf)
     p_block[:] = p_arr; b_block[:] = b_arr; se_block[:] = se_arr; af_block[:] = af_arr
 
+    # Release and remove the shared segments.
     p_shm.close(); p_shm.unlink()
     b_shm.close(); b_shm.unlink()
     se_shm.close(); se_shm.unlink()
@@ -195,6 +245,14 @@ def fill_block_parallel(chrom, i0, i1, trait_paths, row_index,
 # Main builder
 # ------------------------------------------------------------------------------
 def build_chromosome(chrom: str, vcf: str, norm_files, row_block_size: int, trait_workers: int):
+    """
+    Build and write all four metric files for a single chromosome.
+
+    Loads the variant ordering from the VCF, then processes the variants in
+    row-blocks: each block is filled in parallel across traits and streamed out to
+    the per-metric writers (missing values rendered as "."). Finally indexes the
+    outputs. No-op when the chromosome has no variants.
+    """
     trait_names, trait_paths = load_traits_and_paths(norm_files)
     ntraits = len(trait_names)
 
@@ -205,12 +263,14 @@ def build_chromosome(chrom: str, vcf: str, norm_files, row_block_size: int, trai
 
     paths, writers = open_writers(chrom, trait_names)
 
+    # Process variants in fixed-size row-blocks to bound peak memory.
     nblocks = ceil(nvar / row_block_size)
     for b in range(nblocks):
         i0 = b * row_block_size
         i1 = min((b + 1) * row_block_size, nvar)
         block_rows = i1 - i0
 
+        # One matrix per metric, NaN = "no value for this variant/trait".
         p_block = np.full((block_rows, ntraits), np.nan, dtype=np.float32)
         b_block = np.full((block_rows, ntraits), np.nan, dtype=np.float32)
         se_block = np.full((block_rows, ntraits), np.nan, dtype=np.float32)
@@ -225,6 +285,7 @@ def build_chromosome(chrom: str, vcf: str, norm_files, row_block_size: int, trai
         non_nan = np.sum(~np.isnan(p_block))
         print(f"✓ Block {b+1}/{nblocks} filled: {non_nan}/{p_block.size} values", file=sys.stderr)
 
+        # Stream each filled row to all four metric files (NaN -> ".").
         for li in range(block_rows):
             c, p, r, a, vid = rows[i0 + li]
             head = [c, str(p), r, a, vid.decode()]
@@ -240,6 +301,7 @@ def build_chromosome(chrom: str, vcf: str, norm_files, row_block_size: int, trai
 # CLI
 # ------------------------------------------------------------------------------
 def main():
+    """Parse CLI args (supporting both inline and file-based trait lists) and build."""
     parser = argparse.ArgumentParser(description="Build per-chromosome BGZF+Tabix metric files for all traits")
     parser.add_argument("--chrom", required=True, help="Chromosome name (e.g., 1 or chr1)")
     parser.add_argument("--vcf", required=True, help="Path to annotated VCF file")

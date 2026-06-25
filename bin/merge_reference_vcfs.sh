@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# merge_vcfs.sh: Merge, sort, and deduplicate multiple VCF files
+# merge_vcfs.sh: Merge, sort, and deduplicate multiple per-batch site VCFs into the
+# single reference VCF used downstream (bgzipped + tabix-indexed for VEP/lookups).
 # Usage: merge_vcfs.sh MANIFEST_FILE OUTPUT_VCF [CPUS]
 #   MANIFEST_FILE: text file with one VCF path per line
 #   OUTPUT_VCF: final merged VCF file
@@ -23,7 +24,7 @@ if [ ! -f "$FIRST_VCF" ]; then
     exit 1
 fi
 
-# Write header from first file
+# All inputs share the same 2-line header; take it from the first file.
 head -n 2 "$FIRST_VCF" > "$OUTPUT_VCF"
 
 TMP_DIR=$(dirname "$OUTPUT_VCF")/tmp_merge_$$

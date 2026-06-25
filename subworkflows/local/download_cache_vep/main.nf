@@ -11,6 +11,11 @@
 
 include { ENSEMBLVEP_DOWNLOAD } from '../../../modules/nf-core/ensemblvep/download/main'
 
+// DOWNLOAD_CACHE_VEP: fetch the Ensembl VEP cache when none is provided.
+// Wraps the nf-core ENSEMBLVEP_DOWNLOAD module; ANNOTATE_VARIANTS calls this only
+// when params.ensemblvep_cache is unset.
+//   take : ensemblvep_info (meta, genome, species, cache version).
+//   emit : ensemblvep_cache ([meta, cache]) and tool versions.
 workflow DOWNLOAD_CACHE_VEP {
     take:
     ensemblvep_info

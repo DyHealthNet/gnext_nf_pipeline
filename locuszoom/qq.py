@@ -43,6 +43,11 @@ Variant = collections.namedtuple('Variant', ['qval', 'maf'])
 
 
 def augment_variants(variants: ty.Iterator[BasicVariant], num_samples=None):
+    """Yield lightweight (qval=-log10p, maf) tuples from a variant stream.
+
+    p-value 0 is mapped to a large stub qval and MAF is rounded to MAF_SIGFIGS so
+    variants can be grouped into strata downstream.
+    """
     for var in variants:
         if var.pvalue == 0:
             # FIXME: Why does QQ plot require this stub value?
@@ -57,6 +62,7 @@ def augment_variants(variants: ty.Iterator[BasicVariant], num_samples=None):
 
 
 def round_sig(x, digits):
+    """Round x to `digits` significant figures (raises on inf/NaN)."""
     if x == 0:
         return 0
     elif abs(x) == math.inf or math.isnan(x):
@@ -73,6 +79,7 @@ assert round_sig(1.59e-10, 2) == 1.6e-10
 
 
 def approx_equal(a, b, tolerance=1e-4):
+    """Return True if a and b agree to within a relative `tolerance`."""
     return abs(a - b) <= max(abs(a), abs(b)) * tolerance
 
 
@@ -82,6 +89,10 @@ assert not approx_equal(42, 42.01)
 
 
 def make_qq_stratified(variants):
+    """Build QQ data split into NUM_MAF_RANGES equal-size MAF strata.
+
+    Returns one dict per stratum with its MAF range, variant count and QQ bins.
+    """
     # Some variants may be missing MAF. Sort those at the end of the list (eg, lump with the common variants)
     variants = sorted(variants, key=lambda v: (v.maf is None, v.maf))
 
@@ -102,6 +113,8 @@ def make_qq_stratified(variants):
 
 
 def make_qq_unstratified(variants, include_qq):
+    """Build QQ summary over all variants: count, genomic-control lambda at several
+    quantiles, and (optionally) the QQ bins themselves."""
     qvals = sorted((v.qval for v in variants), reverse=True)
     rv = {}
     if include_qq:
@@ -118,6 +131,9 @@ def make_qq_unstratified(variants, include_qq):
 
 
 def compute_qq(qvals):
+    """Compute the binned QQ curve (observed vs. expected -log10p) for a list of
+    qvals. Bins the points into NUM_BINS to keep the JSON small while preserving
+    the visible plot range. `qvals` must be sorted in decreasing order."""
     # qvals must be in decreasing order.
     assert all(a >= b for a, b in boltons.iterutils.pairwise(qvals))
 
@@ -171,6 +187,7 @@ def compute_qq(qvals):
 
 
 def gc_value_from_list(qvals, quantile=0.5):
+    """Genomic-control lambda at `quantile`, taken from a decreasing list of qvals."""
     # qvals must be in decreasing order.
     assert all(a >= b for a, b in boltons.iterutils.pairwise(qvals))
     qval = qvals[int(len(qvals) * quantile)]
@@ -179,6 +196,7 @@ def gc_value_from_list(qvals, quantile=0.5):
 
 
 def gc_value(pval, quantile=0.5):
+    """Genomic-control inflation factor for a p-value at the given quantile."""
     # This should be equivalent to R: `qchisq(median_pval, df=1, lower.tail=F) / qchisq(quantile, df=1, lower.tail=F)`
     return scipy.stats.chi2.ppf(1 - pval, 1) / scipy.stats.chi2.ppf(1 - quantile, 1)
 
@@ -191,6 +209,11 @@ assert approx_equal(gc_value(0.6123), 0.5645607)
 
 
 def get_confidence_intervals(num_variants, confidence=0.95):
+    """Yield (x, y_min, y_max) points tracing the QQ null confidence band.
+
+    The band is evaluated at variant counts spaced in powers of 2 so it renders
+    smoothly across the log-scaled axis.
+    """
     one_sided_doubt = (1 - confidence) / 2
 
     # `variant_counts` are the numbers of variants at which we'll calculate the confidence intervals
