@@ -74,6 +74,7 @@ In addition, a general configuration file `configs/base.config` is provided to a
 | `beta_column` | `9` | Column index of the effect size (beta) field. |
 | `se_column` | `10` | Column index of the standard error field. |
 | `af_column` | `8` | Column index of the alternate allele frequency field. |
+| `n_samples_column` | `11` | OPTIONAL: Column index of the samples number if provided in the GWAS file. Can also be included in the phenotype file. |
 | `pval_neglog10` | `false` | Indicates whether p-values are stored as negative log10 values (`true`) or raw p-values (`false`). |
 | `ensemblvep_species` | `'homo_sapiens'` | Species identifier for Ensembl VEP annotation. |
 | `ensemblvep_genome` | `'GRCh37'` | Genome assembly version used for annotation. |
