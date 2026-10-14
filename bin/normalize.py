@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+Normalize raw GWAS summary statistics into the pipeline's standard format.
+
+Each input file is parsed with zorp (column positions supplied on the CLI) and
+rewritten to a bgzipped, standard-column file keyed by phenocode. An optional
+sample-size column is preserved via a custom parser. Files are processed in
+parallel, one worker per input file. This is the first step of the pipeline; all
+downstream steps consume these normalized files.
+"""
 import argparse
 import os
 import re
@@ -9,12 +18,13 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from zorp import sniffers, parsers
 
-# Define missing values inline to avoid import issues
+# Tokens treated as "no value" when reading the optional sample-size column.
+# Defined inline to avoid importing from zorp internals.
 MISSING_VALUES = {'', '.', 'NA', 'N/A', 'nan', 'NaN', 'NULL', 'null', 'None'}
 
 
 class BasicVariantWithSampleSize(parsers.BasicVariant):
-    """Extended BasicVariant that includes sample size"""
+    """zorp BasicVariant extended with a per-variant sample size (n_samples)."""
     __slots__ = ('n_samples',)
     _fields = ('chrom', 'pos', 'rsid', 'ref', 'alt', 'neg_log_pvalue', 'beta', 'stderr_beta', 'alt_allele_freq', 'n_samples')
     
@@ -28,18 +38,19 @@ def create_parser_with_sample_size(sample_size_col, **parser_options):
     Create a custom parser that extracts sample size from GWAS files.
     This wraps GenericGwasLineParser and adds sample size extraction.
     """
-    # Create the base parser without sample_size_col (which it doesn't support for storage)
+    # The stock zorp parser handles all standard columns; it has no slot for a
+    # sample-size column, so we wrap it and pull that column out ourselves.
     base_parser = parsers.GenericGwasLineParser(**parser_options)
-    
-    # Store the column index (convert from 1-based to 0-based)
+
+    # CLI column indices are 1-based; convert to a 0-based list index.
     n_samples_col_idx = sample_size_col - 1
-    
+
     def wrapper(line):
-        """Parse line and add sample size"""
-        # Parse with base parser
+        """Parse one line with the base parser, then attach its sample size."""
+        # Standard fields via the base zorp parser.
         variant = base_parser(line)
-        
-        # Extract sample size from the line
+
+        # Pull the sample size straight from the raw tab-delimited line.
         fields = line.strip().split('\t')
         if n_samples_col_idx < len(fields):
             ns_value = fields[n_samples_col_idx]
@@ -71,10 +82,14 @@ def process_and_normalize(file_path,
                           beta_col, se_col, af_col, sample_size_col):
     """
     Normalize a single GWAS summary statistics file.
-    Always writes into the current working directory (CWD).
+
+    Reads the file with zorp using the supplied 1-based column positions, choosing
+    the sample-size-aware parser when sample_size_col is given, and writes a
+    bgzipped "<phenocode>.gz" into the current working directory (Nextflow's task
+    workdir). Returns the path to that output file.
     """
-        
-    # Build normalized filename without extensions
+
+    # Output is named purely by phenocode (no source extension) inside the CWD.
     norm_filepath = os.path.join(os.getcwd(), str(phenocode))
     
     parser_options = {
@@ -104,14 +119,17 @@ def process_and_normalize(file_path,
         # Use standard parser
         parser = parsers.GenericGwasLineParser(**parser_options)
     
+    # zorp infers delimiter/header and streams variants through our parser.
     reader = sniffers.guess_gwas_generic(file_path, parser=parser, skip_errors=True)
 
+    # Writing with make_tabix=False yields a plain bgzipped ".gz" output.
     reader.write(norm_filepath, make_tabix=False, columns=columns)
 
     return norm_filepath + ".gz"
 
 
 def main():
+    """Parse CLI args and normalize every listed input file in parallel."""
     parser = argparse.ArgumentParser(description="Normalize a single GWAS summary statistics file")
     parser.add_argument("--input-files", required=True, help="TSV with two columns: <gwas_file> <phenocode>")
     parser.add_argument("--max-workers", type=int, default=4, help="Maximum number of parallel workers")
@@ -128,8 +146,10 @@ def main():
 
     args = parser.parse_args()
     
+    # Input manifest: one "<gwas_file>\t<phenocode>" row per file to normalize.
     input_files_dt = pd.read_csv(args.input_files, sep="\t", header=None, names=["file_path", "phenocode"])
     print(f"[INFO] Loaded {len(input_files_dt)} files to normalize", file=sys.stderr)
+    # Normalize files concurrently; each future handles one input file.
     with ProcessPoolExecutor(max_workers=args.max_workers) as executor:
         futures = [
             executor.submit(process_and_normalize, row['file_path'], row['phenocode'], args.chr_col, args.pos_col, args.ref_col, args.alt_col, args.pval_col, args.pval_neglog10, args.beta_col, args.se_col, args.af_col, args.sample_size_col)

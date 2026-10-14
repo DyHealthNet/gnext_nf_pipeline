@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+Build the variant->gene LMDB used for nearest-gene annotation.
+
+Given an annotated VCF and a gene-location table, every variant position is mapped
+to the genes whose configurable up/downstream window it falls into (located by
+binary search over per-chromosome, start-sorted gene lists). The mapping is stored
+in an LMDB with one sub-database per chromosome, keyed by position; a TSV of the
+genes actually hit is written alongside. Queried later by generate_top_hits.py.
+"""
 import argparse
 import os
 import struct
@@ -149,16 +158,17 @@ def build_snp_gene_map_lmdb_from_vcf(vcf_path, gene_file, window_up, window_down
     db_handles = {}
 
     vcf = pysam.VariantFile(vcf_path)
-    
+
     total_variants = 0
     mapped_variants = 0
     start_time = time.time()
+    # Writes are buffered and flushed in batches to amortize LMDB transaction cost.
     batch_size = 10000
     batch_data = []
-    
+
     # Track unique genes that have been mapped (store full tuples)
     mapped_genes_set = set()
-    
+
     # Process variants and create databases on-demand
     for rec in vcf.fetch():
         chrom = rec.chrom.replace('chr', '')
@@ -212,11 +222,12 @@ def build_snp_gene_map_lmdb_from_vcf(vcf_path, gene_file, window_up, window_down
     env.sync()
     env.close()
     
-    # Write gene metadata to TSV file
+    # Write a TSV listing only the genes that were actually mapped to >=1 variant,
+    # so downstream steps don't carry the full genome annotation.
     print(f"[INFO] Writing metadata for {len(mapped_genes_set):,} unique mapped genes", file=sys.stderr)
     gene_metadata_file = "mapped_genes.tsv"
-    
-    # Create a lookup dict for quick gene info retrieval
+
+    # ensg_id -> full gene record, for quick coordinate/strand lookup when writing.
     gene_lookup = {}
     for chrom, gene_list in genes_by_chr.items():
         for gene in gene_list:
@@ -244,6 +255,7 @@ def build_snp_gene_map_lmdb_from_vcf(vcf_path, gene_file, window_up, window_down
 
 
 def main():
+    """Parse CLI args, convert window sizes to bp, and build the LMDB."""
     parser = argparse.ArgumentParser(
         description="Build variant-gene LMDB mapping from annotated VCF"
     )

@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+# Build one sites-only VCF holding the union of all variants across many
+# normalized GWAS files (the full-variant alternative to batch_reference_vcf.sh).
+# Files are split into batches, each batch is extracted/sorted/de-duplicated in
+# parallel, and the batch outputs are merged, re-sorted and de-duplicated into the
+# final VCF. LC_ALL=C is set so sort order is byte-wise and stable.
 set -euo pipefail
 export LC_ALL=C
 
@@ -7,9 +13,13 @@ set -euo pipefail
 export LC_ALL=C
 
 # Usage: generate_full_variants_vcf.sh OUTPUT_FILE NUM_JOBS BATCH_SIZE FILE1.gz FILE2.gz ...
+#   OUTPUT_FILE - destination VCF path
+#   NUM_JOBS    - number of parallel batch jobs
+#   BATCH_SIZE  - input files per batch (consumed positionally via `shift 3`)
+#   FILE*.gz    - normalized GWAS inputs
 OUTPUT_FILE="$1"
 NUM_JOBS="$2"
-shift 3
+shift 3   # drop OUTPUT_FILE, NUM_JOBS and BATCH_SIZE; remaining args are input files
 FILES=("$@")
 
 echo "Starting VCF generation at $(date)"
@@ -19,7 +29,7 @@ echo "Input files: ${#FILES[@]} files"
 
 echo "Batch size: $BATCH_SIZE"
 
-# header
+# Write the minimal sites-only VCF header (body appended later).
 {
   printf '##fileformat=VCFv4.2\n'
   printf '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n'

@@ -1,3 +1,8 @@
+// Aggregate the global top-hits table across all phenotypes.
+// Runs generate_top_hits.py over every Manhattan JSON, keeping the strongest
+// variant per peak (below the cutoff) and annotating nearest genes from the LMDB.
+// Inputs : file listing Manhattan JSONs, the pheno file, and the variant->gene LMDB.
+// Outputs: top_hits.json.
 process generate_top_hits {
   cache 'lenient'
   publishDir "${params.out_dir}/top_hits", mode: 'symlink'

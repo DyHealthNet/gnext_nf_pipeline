@@ -1,3 +1,9 @@
+// Generate the Manhattan and QQ plot JSONs for every trait.
+// Writes a file->phenocode manifest and runs generate_manhattan_qq.py with the
+// configured binning/peak parameters (zorp asset dir is pre-created to dodge a
+// download race across workers).
+// Inputs : list of (phenocode, file) tuples.
+// Outputs: *_manhattan.json (emit: manhattan) and *_qq.json (emit: qq).
 process generate_manhattan_qq {
   cache 'lenient'
   publishDir "${params.out_dir}/manhattan_qq", mode: 'symlink'

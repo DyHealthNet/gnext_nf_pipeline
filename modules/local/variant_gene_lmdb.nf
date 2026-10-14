@@ -1,3 +1,8 @@
+// Build the variant->gene LMDB used for nearest-gene annotation.
+// Runs generate_variant_gene_lmdb.py over the annotated VCF, mapping each variant
+// position to genes within the configured up/downstream window.
+// Inputs : annotated vcf + tbi and the chromosome list (sizes the LMDB).
+// Outputs: the LMDB (data + lock) and mapped_genes.tsv (emit: genes_metadata).
 process generate_variant_gene_lmdb {
   publishDir "${params.out_dir}/lmdb_gene", mode: 'symlink'
   

@@ -1,3 +1,8 @@
+// Merge all per-batch site VCFs into the single reference VCF.
+// Lists the staged batch VCFs into a manifest and runs merge_reference_vcfs.sh,
+// which concatenates, re-sorts, de-duplicates, bgzips and tabix-indexes them.
+// Inputs : the collected batch_variants_*.vcf files.
+// Outputs: full_variants.vcf.gz (emit: vcf) and its .tbi (emit: vcf_tbi).
 process merge_batch_reference_vcfs {
     publishDir "${params.out_dir}/annotate", mode: 'symlink'
 

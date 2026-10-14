@@ -5,6 +5,11 @@ include{generate_magma_data_input} from '../../../modules/local/magma_input_gwas
 include{run_magma_gene_test} from '../../../modules/local/magma_gene_test.nf'
 include {generate_gene_magma_bgz} from '../../../modules/local/gene_magma_bgz.nf'
 
+// MAGMA_ANALYSIS: run the full MAGMA gene-level pipeline.
+// Annotates SNPs to genes once, builds per-trait MAGMA SNP inputs, runs the gene
+// test per trait (joined to gwas_rows for deterministic, sample-size-aware
+// ordering), then collates all results into the gene x trait BGZ matrix.
+//   take : norm_gz_files, gwas_rows, mapped_genes.
 workflow MAGMA_ANALYSIS {
     take:
         norm_gz_files   // Channel with normalized GWAS results
@@ -48,6 +53,8 @@ workflow MAGMA_ANALYSIS {
         .map { pheno, n, tsv_file -> tuple(pheno, tsv_file, n) }
         .collate(params.pheno_batch_size)
     
+    // Attach the shared annotation + reference panel files to every batch.
+    // combine() appends the annotation as the last element, so split it back out.
     magma_input_final = magma_batches
         .combine(magma_annotation)
         .map { items ->

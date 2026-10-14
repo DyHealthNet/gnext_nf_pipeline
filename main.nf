@@ -1,3 +1,14 @@
+// ============================================================================
+// gnext_nf_pipeline - top-level workflow
+//
+// Orchestrates the full GWAS post-processing pipeline:
+//   1. NORMALIZE_GWAS      - normalize raw summary stats into a standard format.
+//   2. (gwas_exploration)  - annotate variants with VEP, generate Manhattan/QQ/
+//                            top-hit JSONs, and per-chromosome BGZ matrices.
+//   3. (gene_statistics)   - run MAGMA gene-level analysis.
+// The two downstream blocks are gated by params.steps. SNAPSHOT_PARAMETERS records
+// the run configuration at the end.
+// ============================================================================
 nextflow.enable.dsl=2
 
 include { NORMALIZE_GWAS } from './subworkflows/local/normalize_gwas/main'

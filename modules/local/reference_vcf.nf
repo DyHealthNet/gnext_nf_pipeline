@@ -1,3 +1,8 @@
+// Build the reference VCF directly from all normalized files in one shot.
+// Runs generate_full_variants_vcf.sh over every normalized .gz, then bgzips and
+// tabix-indexes the result. (Single-step alternative to the batch + merge path.)
+// Inputs : list of all normalized .gz files.
+// Outputs: full_variants.vcf.gz (emit: vcf) and its .tbi (emit: vcf_tbi).
 process generate_vcf {
   publishDir "${params.out_dir}/annotate", mode: 'symlink'
 

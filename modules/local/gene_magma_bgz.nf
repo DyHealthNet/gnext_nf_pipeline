@@ -1,3 +1,8 @@
+// Collate every trait's MAGMA gene results into one indexed BGZ matrix.
+// Writes a phenocode->file manifest, then runs generate_gene_magma_bgz.py to
+// produce the gene x trait p-value table plus an LMDB offset index for fast lookup.
+// Inputs : mapped_genes table, and the list of per-trait *_magma.genes.out files.
+// Outputs: gene_magma_pvalues.tsv.bgz and the LMDB index (data + lock files).
 process generate_gene_magma_bgz {
     publishDir "${params.out_dir}/magma_results", mode: 'symlink'
 

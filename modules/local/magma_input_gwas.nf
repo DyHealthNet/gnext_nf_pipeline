@@ -1,3 +1,9 @@
+// Prepare the per-trait SNP p-value inputs that the MAGMA gene test consumes.
+// Builds a file->phenocode manifest, then runs generate_magma_data_input.py to
+// filter each normalized GWAS file to variants present in the reference .bim
+// (optionally carrying the sample-size column).
+// Inputs : list of normalized .gz files and the reference PLINK .bim.
+// Outputs: one *_magma.tsv per trait (emit: input_files) and mapping_summary.tsv.
 process generate_magma_data_input {
   publishDir "${params.out_dir}/magma_input", mode: 'symlink'
 

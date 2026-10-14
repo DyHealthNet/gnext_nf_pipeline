@@ -1,3 +1,9 @@
+// Normalize a batch of raw GWAS files into the pipeline's standard format.
+// Writes a manifest and runs normalize.py with the configured column positions,
+// then sorts, bgzips and tabix-indexes each "<phenocode>" output. This is the
+// pipeline's first step; everything downstream consumes these .gz files.
+// Inputs : list of [phenocode, file, nr_samples] rows.
+// Outputs: *.gz (emit: gz) and *.gz.tbi (emit: tbi).
 process normalize {
   cache 'lenient'
   publishDir "${params.out_dir}/normalize", mode: 'symlink'
