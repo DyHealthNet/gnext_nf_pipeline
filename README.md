@@ -26,11 +26,15 @@ For running MAGMA, appropriate reference data are required. The 1000 Genomes Pro
 
 Reference data is deposited on Zenodo https://doi.org/10.5281/zenodo.17940903, including PLINK files for GRCh37 and GRCh38 across five super populations as well as Ensembl protein-coding gene annotation files for GRCh37 and GRCh38 from Ensembl releases 114 and 115.
 
-After downloading, the corresponding paths to the reference files should be updated in the nextflow.config file.
+After downloading, specify the corresponding reference file paths in the study-specific configuration file.
 
 **Note**: For alternative Ensembl versions of the gene annotation files, or for details on how the reference data were generated, please consult the GitHub repository at https://github.com/DyHealthNet/gnext_reference_data.git. 
 
 ## Prepare Your Data
+
+> [!NOTE]
+> A Shiny application is also available to simplify the configuration and execution of the GNExT Nextflow pipeline. For instructions on how to download and use the app, see https://github.com/DyHealthNet/gnext_config_interface.
+
 
 The primary input to the preprocessing pipeline is a CSV/TSV file containing the phenotypes and their corresponding GWAS summary statistics file locations.  
 Each row represents one phenotype, with the following columns:
@@ -47,12 +51,24 @@ The column positions for the required fields (chrom, pos, ref, alt, p-value, bet
 
 ## Fill the Nextflow Config Files
 
-Study-specific parameters must be defined in the configuration file `configs/study_specific.config`.
+Copy the configuration files from the cloned repository into your job directory:
 
-Computational settings such as memory allocation, runtime limits, and other scheduler-related parameters should be specified in `configs/compute_slurm.config`.
+```bash
+PIPELINE_DIR=/path/to/gnext_nf_pipeline
+JOB_DIR=/path/to/my_job
 
-In addition, a general configuration file `configs/base.config` is provided to adjust parameters related to Manhattan and top hits generation as well as VEP window distances. These parameters are preconfigured with suitable defaults and typically do not require manual modification.
+mkdir -p "$JOB_DIR/configs"
 
+cp "$PIPELINE_DIR/configs/study_specific.config" "$JOB_DIR/configs/"
+cp "$PIPELINE_DIR/configs/compute.config" "$JOB_DIR/configs/"
+cp "$PIPELINE_DIR/configs/base.config" "$JOB_DIR/configs/"
+```
+
+Edit the copied configuration files in `$JOB_DIR/configs/`.
+
+Study-specific parameters must be defined in the configuration file `$JOB_DIR/configs/study_specific.config`.
+Computational settings such as memory allocation, runtime limits, and other scheduler-related parameters should be specified in `$JOB_DIR/configs/compute.config`.
+In addition, a general configuration file `$JOB_DIR/configs/base.config` is provided to adjust parameters related to Manhattan and top hits generation as well as VEP window distances. These parameters are preconfigured with suitable defaults and typically do not require manual modification.
 
 ### Study-Specific Config
 
@@ -74,12 +90,13 @@ In addition, a general configuration file `configs/base.config` is provided to a
 | `beta_column` | `9` | Column index of the effect size (beta) field. |
 | `se_column` | `10` | Column index of the standard error field. |
 | `af_column` | `8` | Column index of the alternate allele frequency field. |
+| `n_samples_column` | `11` | OPTIONAL: Column index of the samples number if provided in the GWAS file. Can also be included in the phenotype file. |
 | `pval_neglog10` | `false` | Indicates whether p-values are stored as negative log10 values (`true`) or raw p-values (`false`). |
 | `ensemblvep_species` | `'homo_sapiens'` | Species identifier for Ensembl VEP annotation. |
 | `ensemblvep_genome` | `'GRCh37'` | Genome assembly version used for annotation. |
 | `ensemblvep_cache_version` | `110` | Version of the Ensembl VEP cache used during annotation. Must match the installed VEP version. |
 | `ensemblvep_cache` | `NA` | **Optional**. Path to pre-existing VEP cache. If no cache existing, cache will be downloaded automatically. |
-| `magma_reference_plink` | `NA` | Path to the PLINK reference panel used by MAGMA for gene-based analyses. |
+| `magma_reference_plink` | `NA` | Path to the PLINK reference prefix, either for a single dataset (e.g., `/path/to/ref`) or chromosome-split datasets (e.g., `/path/to/ref_chr` for `ref_chr1`, `ref_chr2`, etc.). |
 
 
 **Note**: Environment files are provided for VEP versions 110, 113, 114, and 115. The VEP version installed in Conda must correspond to the VEP cache version. If a different VEP version is required (e.g., to match an existing VEP cache), an additional environment file named vep_X.yml should be created, where X denotes the desired VEP version.
@@ -129,17 +146,38 @@ Once all parameters have been correctly specified, the pipeline can be executed.
 We support execution through Conda, Docker, or Singularity environments (e.g., -profile conda, -profile docker) and enable job scheduling via SLURM (e.g., -profile slurm,conda, -profile slurm,docker).
 
 
+Run the following commands from the job directory (using the same `PIPELINE_DIR` and `JOB_DIR` paths defined above). Nextflow will create the `work/` directory there automatically:
+
 ```bash
-nextflow run main.nf -profile slurm,docker
+cd "$JOB_DIR"
+
+nextflow run "$PIPELINE_DIR/main.nf" \
+  -profile slurm,conda \
+  --job_dir "$JOB_DIR"
 ```
 
 To resume the workflow:
 
 ```bash
-nextflow run main.nf -profile slurm,docker -resume
+nextflow run "$PIPELINE_DIR/main.nf" \
+  -profile slurm,conda \
+  --job_dir "$JOB_DIR" \
+  -resume
 ```
 
-**Note**: Run the pipeline in a tmux session to ensure a persistent interactive terminal environment. The Nextflow workflow depends on an active terminal session, and using tmux prevents unintended termination due to session disconnects (e.g., SSH timouts). This allows the pipeline to continue running in the background and enables you to reattach to the session at any time.
+**Note**: Note: If the automatic conda installation is failing, create a conda environment yourself and change the path of process.conda in nextflow.config to the conda environment:
+
+```bash
+conda env create -f "$PIPELINE_DIR/envs/gnext_nf_pipeline.yml"
+```
+
+To check the path of your conda environment:
+
+```bash
+conda env list
+```
+
+**Another Note**: Run the pipeline in a tmux session to ensure a persistent interactive terminal environment. The Nextflow workflow depends on an active terminal session, and using tmux prevents unintended termination due to session disconnects (e.g., SSH timouts). This allows the pipeline to continue running in the background and enables you to reattach to the session at any time.
 
 For creating a tmux session:
 
@@ -160,12 +198,16 @@ To list you existing sessions:
 tmux ls
 ```
 
+
+
 # Replace Symlinks by Copying Files
 
-The Nextflow pipeline generates symbolic links in the output directory. Therefore, as a final step, navigate to the output directory and execute the following command:
+The Nextflow pipeline generates symbolic links in the output directory. Therefore, as a final step, navigate to the directory specified by `params.out_dir` and execute the following command:
 
 
 ```bash
+cd /path/to/output_directory
+
 find . -type l -exec sh -c '
   target=$(readlink -f "$1")
   if [ -f "$target" ]; then
@@ -185,12 +227,15 @@ Only change the pheno_file, append columns at the end (not in between rows), and
 
 
 ```bash
-nextflow run main.nf -profile slurm,docker -resume
+cd "$JOB_DIR"
+
+nextflow run "$PIPELINE_DIR/main.nf" \
+  -profile slurm,docker \
+  --job_dir "$JOB_DIR" \
+  -resume
 ```
 
 # Citation
 
-Bridging the gap between genome-wide association studies and network medicine with GNExT
-Lis Arend, Fabian Woller, Bastienne Rehor, David Emmert, Johannes Frasnelli, Christian Fuchsberger, David B. Blumenthal, Markus List
-bioRxiv 2026.01.30.702559; doi: https://doi.org/10.64898/2026.01.30.702559
+Arend, L., Woller, F., Rehor, B. et al. Bridging the gap between GWAS and network medicine with GNExT. Nat Genet (2026). https://doi.org/10.1038/s41588-026-02708-6
 

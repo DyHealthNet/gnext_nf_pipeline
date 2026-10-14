@@ -11,7 +11,7 @@ N_PARAM=$5
 OUT_PREFIX=$6
 
 echo "MAGMA parameters:"
-echo "Reference file/prefix: $REF_FILE"
+echo "Reference file: $REF_FILE"
 echo "Annotation file: $ANNO_LOC"
 echo "SNP p-value file: $SNP_PVAL_FILE"
 echo "Max workers: $MAX_WORKERS"
